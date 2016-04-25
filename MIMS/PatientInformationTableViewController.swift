@@ -17,13 +17,22 @@ class PatientInformationTableViewController: UITableViewController {
     let actionData = ["Delete Patient Record", "Charge Patient", "Manage Patient Insurence", "Admit Patient", "Discharge Patient" , "Manage Patient Information", "Request Patient Test", "Complete Patient Test", "Diagnose Symptoms","Issue Treatent", "Prescribe Medication", "Check Patient Status", "Transfer Patient"]
     
     let technicalActionData = ["Complete Patient Test", "Diagnose Symptoms", "Check Patient Status", "Manage Patient Info"]
-    let adminData = [ "Discharge Patient", "Manage Patient Info"]
-    let operationalData = ["Request Patient Test", "Complete Patient Test", "Diagnose Symptom", "Issue Treatment", "Prescribe Medication", "Transfer Patient"]
+    let adminData = [ "Discharge Patient", "Manage Patient Info", "Delete Patient Record", "Charge Patient", "Manage Patient Insurence"]
+    let operationalData = ["Request Patient Test", "Complete Patient Test", "Diagnose Symptom", "Issue Treatment", "Prescribe Medication","Check Patient Status", "Transfer Patient"]
     
-    
+    var flag  = "1"
+    //flag 0 = admin, 1 = operational, 2 = technical
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        guard let userType = MIMSUser.currentUser()!.userType else {
+            flag = ""
+            return
+        }
+        
+        flag = userType
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -51,9 +60,20 @@ class PatientInformationTableViewController: UITableViewController {
             return tableData.count
         }
 
+        else if flag == UserTypes.AdminUser.rawValue
+        {
+            return adminData.count
+        }
+        else if flag == UserTypes.TechnicalUser.rawValue
+        {
+            return technicalActionData.count
+
+        }
+        //else operational user
         else
         {
-            return actionData.count
+            return operationalData.count
+
         }
     }
     
@@ -88,6 +108,22 @@ class PatientInformationTableViewController: UITableViewController {
         return UITableViewAutomaticDimension
     }
     
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        switch flag {
+        case UserTypes.AdminUser.rawValue:
+            if indexPath.section == 1 {
+                
+            }
+        case UserTypes.TechnicalUser.rawValue:
+            print(indexPath.row)
+            
+        case UserTypes.OperationalUser.rawValue:
+            print(indexPath.row)
+            
+        default:
+            print(indexPath.row)
+        }
+    }
 
     /*
     // Override to support conditional editing of the table view.
