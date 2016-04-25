@@ -35,6 +35,10 @@ class SelectionListTableViewController: UITableViewController {
         default:
             tableData = medication
         }
+        
+        let save = UIBarButtonItem(title: "Save", style: .Plain, target: self, action: #selector(SelectionListTableViewController.saveTapped(_:)))
+        
+        self.navigationItem.setRightBarButtonItem(save, animated: true)
 
         let sizeArray = [Bool](count: tableData.count, repeatedValue: false)
         checked = sizeArray
@@ -46,6 +50,11 @@ class SelectionListTableViewController: UITableViewController {
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
     }
+    @IBAction func saveTapped(sender: AnyObject) {
+        
+        
+    }
+    
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

@@ -90,11 +90,18 @@ class PatientInformationTableViewController: UITableViewController {
         }
         else
         {
-            cell.textLabel?.text = actionData[indexPath.row]
-            cell.detailTextLabel?.text = " "
+            switch flag  {
+            case UserTypes.AdminUser.rawValue:
+                cell.textLabel?.text = adminData[indexPath.row]
+            case UserTypes.TechnicalUser.rawValue:
+                cell.textLabel?.text = technicalActionData[indexPath.row]
+            case UserTypes.OperationalUser.rawValue:
+                cell.textLabel?.text = operationalData[indexPath.row]
+            default:
+                cell.textLabel?.text = operationalData[indexPath.row]
+            }
+            return cell
         }
-        
-        
         return cell
     }
     override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -102,7 +109,7 @@ class PatientInformationTableViewController: UITableViewController {
             return "Information"
             
         }
-        else{
+        else {
             return "Actions"
         }
     }
@@ -281,6 +288,21 @@ class PatientInformationTableViewController: UITableViewController {
             let indexPath:NSIndexPath = self.tableView.indexPathForSelectedRow!
             let detailVC:SelectionListTableViewController = segue.destinationViewController as! SelectionListTableViewController
             detailVC.flag = selectionFlag
+            if flag == UserTypes.AdminUser.rawValue
+            {
+                detailVC.title = adminData[indexPath.row]
+            }
+            if flag == UserTypes.TechnicalUser.rawValue
+            {
+                detailVC.title = technicalActionData[indexPath.row]
+            }
+                //else operational user
+            else
+            {
+                detailVC.title = operationalData[indexPath.row]
+                
+            }
+            detailVC.navigationItem.backBarButtonItem?.title = "Back"
         }
     }
     
