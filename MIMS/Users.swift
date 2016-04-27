@@ -15,7 +15,7 @@ enum UserTypes: String {
     case OperationalUser = "Operational"
 }
 
-enum UserErrors: ErrorType {
+enum UserError: ErrorType {
     case InvalidUserType
 }
 
@@ -45,10 +45,15 @@ class MIMSUser: PFUser {
         }
     }
     
+    var appointments: [Appointment]? {
+        get {return self["appointments"] as? [Appointment]}
+        set {}
+    }
+    
     convenience init(withUserType type: String, department: String, institution: String) throws {
         self.init()
         guard let userType = UserTypes(rawValue: type) else {
-            throw UserErrors.InvalidUserType
+            throw UserError.InvalidUserType
         }
         self.userType = userType.rawValue
         ParseClient.queryDepartments("name", value: department) { (departments, error) in

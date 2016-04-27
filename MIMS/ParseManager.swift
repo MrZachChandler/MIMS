@@ -10,7 +10,7 @@ import Foundation
 import Parse
 
 
-enum ParseErrorCodes: ErrorType {
+enum ParseError: ErrorType {
     case InvalidUsernameLength(message: String)
     case InvalidPasswordLength(message: String)
     case InvalidKey(message: String)
@@ -21,11 +21,11 @@ class ParseClient {
 
     class func login(username: String, password: String, completion: (error: NSError?) ->()) throws {
         guard username.characters.count >= 6 else {
-            throw ParseErrorCodes.InvalidUsernameLength(message: "You didn't enter enough characters for your username")
+            throw ParseError.InvalidUsernameLength(message: "You didn't enter enough characters for your username")
         }
         
         guard password.characters.count >= 8 else {
-            throw ParseErrorCodes.InvalidPasswordLength(message: "You didn't enter enough characters for your password")
+            throw ParseError.InvalidPasswordLength(message: "You didn't enter enough characters for your password")
         }
         
         self.loginUser(username, password: password, completion: completion)
@@ -56,7 +56,7 @@ class ParseClient {
     
     class func queryUsers(key: String, value: AnyObject, completion: (users: [MIMSUser]?, error: NSError?) ->()) throws {
         guard key.characters.count > 0 && key != "" else {
-            throw ParseErrorCodes.InvalidKey(message: "An invalid key/value was sent")
+            throw ParseError.InvalidKey(message: "An invalid key/value was sent")
         }
         let query = MIMSUser.query()
         query?.whereKey(key, equalTo: value)
@@ -69,7 +69,7 @@ class ParseClient {
     
     class func queryPatients(key: String, value: String, completion: (patients: [Patient]?, error: NSError?) ->()) throws {
         guard value != "" && key != "" else {
-            throw ParseErrorCodes.InvalidKey(message: "An invalid key/value was sent")
+            throw ParseError.InvalidKey(message: "An invalid key/value was sent")
         }
         let query = PFQuery(className: "Patient")
         query.whereKey(key, hasPrefix: value)
@@ -120,12 +120,25 @@ class ParseClient {
         }
     }
     
+    class func queryAppointments(completion: (appointments: [Appointment]?, error: NSError?) ->()) {
+        let query = PFQuery(className: "Appointment")
+        query.whereKey("doctor", equalTo: MIMSUser.currentUser()!)
+        query.includeKey("patient")
+        query.findObjectsInBackgroundWithBlock { (appointments, error) in
+            if error == nil && appointments!.count > 0 {
+                completion(appointments: appointments as? [Appointment], error: nil)
+            } else {
+                completion(appointments: nil, error: error!)
+            }
+        }
+    }
+    
     class func addPatientData() {
         let address = Address()
         try! address.newAddress("111 Test Street", city: "Auburn:", state: "AL", zip: "36832")
         let insuarnceInfo = try! InsuranceInfo(initWith: NSDate(), memID: "11111111", grpID: "13e90093", amount: 10)
         let finance = try! FinancialInformation(initWithAllInfo: "some user's payment info", balance: 10)
-        let patient1 = try! Patient(initWithInfo: "John Doe", married: false, gender: true, birthday: NSDate(), ssn: "291822910", address: address, insuranceInfo: insuarnceInfo, financeData: finance)
+        let patient1 = try! Patient(initWithInfo: "John Doe", married: false, gender: true, birthday: NSDate(), ssn: "291822910", address: address, insuranceInfo: insuarnceInfo, financeData: finance, phoneNumber: "111-111-1111")
         patient1.saveEventually()
         let patientRecord = PatientRecord()
         patientRecord.patient = patient1
@@ -145,10 +158,10 @@ class ParseClient {
      - parameter ssn:           The patient's SSN
      - parameter completion:    A completion called upon successful or unsuccessful adding of the patient. If unsuccessful, the error message will not be empty and success will be false. Otherwise success will be true with an empty error message.
      */
-    class func admitPatient(withPatientInfo address: Address, insuranceInfo: InsuranceInfo, financeData: FinancialInformation, name: String, maritalStatus: Bool, gender: Bool, birthday: NSDate, ssn: String, completion: (success: Bool, errorMessage: String) ->()) {
+    class func admitPatient(withPatientInfo address: Address, insuranceInfo: InsuranceInfo, financeInfo: FinancialInformation, name: String, maritalStatus: Bool, gender: Bool, birthday: NSDate, ssn: String, phone: String, completion: (success: Bool, errorMessage: String) ->()) {
         
         do {
-            let newPatient = try Patient(initWithInfo: name, married: maritalStatus, gender: gender, birthday: birthday, ssn: ssn, address: address, insuranceInfo: insuranceInfo, financeData: financeData)
+            let newPatient = try Patient(initWithInfo: name, married: maritalStatus, gender: gender, birthday: birthday, ssn: ssn, address: address, insuranceInfo: insuranceInfo, financeData: financeInfo, phoneNumber: phone)
             let patientRecord = PatientRecord()
             patientRecord.patient = newPatient
             patientRecord.canBeDischarged = false
@@ -168,41 +181,17 @@ class ParseClient {
                 }
             })
             
-        } catch PatientErrors.InvalidSSN {
+        } catch PatientError.InvalidSSN {
             completion(success: false, errorMessage: "You entered an invalid SSN. It must be exactly 9 characters.")
-        } catch PatientErrors.InvalidName {
+        } catch PatientError.InvalidName {
             completion(success: false, errorMessage: "You entered an invalid name. It cannot be empty.")
-        } catch PatientErrors.InvalidBrthday {
+        } catch PatientError.InvalidBrthday {
             completion(success: false, errorMessage: "You entered an invalid birthday. The birthday must not be in the future.")
-        } catch _ {
-            completion(success: false, errorMessage: "An unknown error occured. Please try again.")
+        } catch PatientError.InvalidPhoneNumber{
+            completion(success: false, errorMessage: "You entered an invalid phone number. The number must be 11 characters.")
         }
-    }
-    
-    /**
-     A private function to find a random doctor to assign to a new patient. Not the best implemetation of finding a doctor to assign but ya know, it will do.
-     
-     - parameter completion: If there's a new doctor to assign, the parameter will be filled, otherwise there will be an error.
-     */
-    private class func findDoctorToAssign(completion: (newDoctor: MIMSUser?, error: NSError?) ->()) {
-        let count = PFUser.query()!
-        count.countObjectsInBackgroundWithBlock { (countedUsers, error) in
-            if error == nil {
-                let query = PFUser.query()!
-                query.whereKey("userType", equalTo: UserTypes.OperationalUser.rawValue)
-                query.limit = 1
-                query.skip = Int(arc4random_uniform(UInt32(countedUsers))+0)
-                query.getFirstObjectInBackgroundWithBlock({ (newDoctor, error) in
-                    if error == nil && newDoctor != nil {
-                        completion(newDoctor: newDoctor as? MIMSUser, error: nil)
-                    } else {
-                        completion(newDoctor: nil, error: error!)
-                    }
-                })
-
-            } else {
-                completion(newDoctor: nil, error: error!)
-            }
+        catch _ {
+            completion(success: false, errorMessage: "An unknown error occured. Please try again.")
         }
     }
     
@@ -333,7 +322,19 @@ class ParseClient {
         treatments.fetchInBackgroundWithBlock { (newTreatments, error) in
             if error == nil {
                 for script in newlyRequestedScripts {
-                    (newTreatments as! Treatment).addNewScript(script)
+                    let scripts = treatments.prescriptions
+                    var scriptDescriptions: [String]!
+                    for script in scripts! {
+                        scriptDescriptions.appendContentsOf(script.scripts!)
+                    }
+                    for description in scriptDescriptions {
+                        if !(record.conditions?.allergies?.contains(description))! {
+                            (newTreatments as! Treatment).addNewScript(script)
+                        } else {
+                            let error = NSError(domain: "Patient Treatments", code: 001, userInfo: ["description": "Can't prescribe a medication the patient is allergic to!"])
+                            completion(error: error)
+                        }
+                    }
                 }
                 newTreatments?.saveEventually()
                 completion(error: nil)
@@ -410,7 +411,7 @@ class ParseClient {
         for allergy in newAllergies {
             do {
                 try record.conditions?.addAllergy(allergy)
-            } catch ConditionErrors.InvalidAllergy {
+            } catch ConditionError.InvalidAllergy {
                 error = NSError(domain: "Condition error", code: 000, userInfo: ["description" : "Bad allergy name."])
             } catch _ {
                 error = NSError(domain: "Condition error", code: 001, userInfo: ["description" : "Unknown allergy error"])
@@ -433,7 +434,7 @@ class ParseClient {
         for disorder in newDisorders {
             do {
                 try record.conditions?.addDisorder(disorder)
-            } catch ConditionErrors.InvalidDisorder {
+            } catch ConditionError.InvalidDisorder {
                 error = NSError(domain: "Condition error", code: 000, userInfo: ["description" : "Bad disorder name."])
             } catch _ {
                 error = NSError(domain: "Condition error", code: 001, userInfo: ["description" : "Unknown disorder error"])
@@ -456,10 +457,10 @@ class ParseClient {
         for disease in newDiseases {
             do {
                 try record.conditions?.addDisease(disease)
-            } catch ConditionErrors.InvalidDisease {
-                error = NSError(domain: "Condition error", code: 000, userInfo: ["description" : "Bad disease name."])
+            } catch ConditionError.InvalidDisease {
+                error = NSError(domain: "Condition error", code: 000, userInfo: ["description": "Bad disease name."])
             } catch _ {
-                error = NSError(domain: "Condition error", code: 001, userInfo: ["description" : "Unknown disease error"])
+                error = NSError(domain: "Condition error", code: 001, userInfo: ["description": "Unknown disease error"])
             }
         }
         record.saveEventually()
@@ -467,7 +468,7 @@ class ParseClient {
     }
     
     /**
-     Method to add a new cause of death. Can only be assigned if a cause of death hasn't already been assigned.add
+     Method to add a new cause of death. Can only be assigned if a cause of death hasn't already been assigned
      
      - parameter newCOD: The new newCOD
      - parameter record: The patient record
@@ -477,13 +478,13 @@ class ParseClient {
     class func addNewCauseOfDeath(newCOD cod: String, toPatientRecord record: PatientRecord) -> NSError? {
         var error: NSError?
         if let _ = record.conditions?.causeOfDeath {
-            error = NSError(domain: "Condition error", code: 004, userInfo: ["description": "Cause of Death can only be assigned once!"])
+            error = NSError(domain: "Condition error", code: 004, userInfo: ["description": "Cause of Death can only be assigned once! Patient cannot die more than once."])
             return error
         }
         do {
             try record.conditions?.addCauseOfDeath(cod)
-        } catch ConditionErrors.InvalidCOD {
-            error = NSError(domain: "Condition error", code: 002, userInfo: ["description" : "Invalid cause of death"])
+        } catch ConditionError.InvalidCOD {
+            error = NSError(domain: "Condition error", code: 002, userInfo: ["description": "Invalid cause of death"])
             return error
         } catch _ {
             error = NSError(domain: "Condition error", code: 003, userInfo: ["description": "Unknown cause of death error"])
@@ -492,6 +493,13 @@ class ParseClient {
         return nil
     }
     
+    /**
+     Method to try to transfer a patient to another doctor. Will check if the name is valid and if it is will assign the new doctor, otherwise it will return an error.
+     
+     - parameter name:       The name of the new doctor to assign the patient to
+     - parameter record:     The patient record
+     - parameter completion: Called with the result, success if a doctor was found, or error otherwise
+     */
     class func transferPatient(toNewDoctorWithName name: String, withPatientRecord record: PatientRecord, completion: (success: Bool, error: NSError?) ->()) {
         do {
             try queryUsers("name", value: name, completion: { (users, error) in
@@ -502,29 +510,67 @@ class ParseClient {
                     completion(success: false, error: error!)
                 }
             })
-        } catch ParseErrorCodes.InvalidKey(message: _) {
+        } catch ParseError.InvalidKey(message: _) {
             let error = NSError(domain: "User query", code: 000, userInfo: ["description": "No doctor found with name to reassign"])
             completion(success: false, error: error)
         } catch _ {
-            let error = NSError(domain: "User query", code: 001, userInfo: ["description" : "An unknown user query error occured."])
+            let error = NSError(domain: "User query", code: 001, userInfo: ["description": "An unknown user query error occured."])
             completion(success: false, error: error)
         }
     }
     
+    /**
+     Method to add a new set of scans to the patient record.
+     
+     - parameter newlyRequestedScans: The set of newly requeusted scans
+     - parameter record:              The patient record to add to
+     */
     class func addScan(newlyRequestedScans: [Scan], toPatientRecord record: PatientRecord) {
         for scan in newlyRequestedScans {
             record.addScan(newScan: scan)
         }
     }
     
+    /**
+     A private function to find a random doctor to assign to a new patient. Not the best implemetation of finding a doctor to assign but ya know, it will do.
+     
+     - parameter completion: If there's a new doctor to assign, the parameter will be filled, otherwise there will be an error.
+     */
+    private class func findDoctorToAssign(completion: (newDoctor: MIMSUser?, error: NSError?) ->()) {
+        let count = PFUser.query()!
+        count.countObjectsInBackgroundWithBlock { (countedUsers, error) in
+            if error == nil {
+                let query = PFUser.query()!
+                query.whereKey("userType", equalTo: UserTypes.OperationalUser.rawValue)
+                query.limit = 1
+                query.skip = Int(arc4random_uniform(UInt32(countedUsers))+0)
+                query.getFirstObjectInBackgroundWithBlock({ (newDoctor, error) in
+                    if error == nil && newDoctor != nil {
+                        completion(newDoctor: newDoctor as? MIMSUser, error: nil)
+                    } else {
+                        completion(newDoctor: nil, error: error!)
+                    }
+                })
+                
+            } else {
+                completion(newDoctor: nil, error: error!)
+            }
+        }
+    }
     
+    /**
+     A private function to find a random pharmacist to assign to a new prescription.
+     
+     - parameter completion: A new pharmacist to assign to the prescription, or an error if one can't be found.
+     */
     private class func findPharmacistToAssign(completion: (newPharmacist: MIMSUser?, error: NSError?) ->()) {
+        let department = try! Department(withName: "Pharmacy")
         let count = PFUser.query()!
         count.countObjectsInBackgroundWithBlock { (countedUsers, error) in
             if error == nil {
                 let query = PFUser.query()!
                 query.whereKey("userType", equalTo: UserTypes.TechnicalUser.rawValue)
-                query.whereKey("type", equalTo: "Pharmacist")
+                query.whereKey("department", equalTo: department)
                 query.limit = 1
                 query.skip = Int(arc4random_uniform(UInt32(countedUsers))+0)
                 query.getFirstObjectInBackgroundWithBlock({ (pharmacist, error) in

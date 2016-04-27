@@ -9,7 +9,7 @@
 import Foundation
 import Parse
 
-enum FinanceErrors: ErrorType {
+enum FinanceError: ErrorType {
     case InvalidBalance
     case InvalidPaymentInfo
 }
@@ -33,15 +33,21 @@ class FinancialInformation: PFObject, PFSubclassing {
         }
     }
     
-    var outstandingBalance: Int? {
+    var outstandingBalance: Double? {
         get {
-            return self["outstandingBalance"] as? Int
+            return self["outstandingBalance"] as? Double
         }
         set {
             if newValue != nil && newValue >= 0 {
                 self["outstandingBalance"] = newValue!
+                self.goodStanding = false
             }
         }
+    }
+    
+    var goodStanding: Bool? {
+        get {return self["standing"] as? Bool}
+        set{if newValue != nil {self["standing"] = newValue!}}
     }
     
     /**
@@ -54,10 +60,11 @@ class FinancialInformation: PFObject, PFSubclassing {
     convenience init(initWithPaymentInfo paymentInfo: String) throws {
         self.init()
         if paymentInfo == "" {
-            throw FinanceErrors.InvalidPaymentInfo
+            throw FinanceError.InvalidPaymentInfo
         }
         self.paymentInfo = paymentInfo
         self.outstandingBalance = 0
+        self.goodStanding = true
     }
     
     /**
@@ -68,20 +75,29 @@ class FinancialInformation: PFObject, PFSubclassing {
      
      - returns: A new FinancialInformation object
      */
-    convenience init(initWithAllInfo paymentInfo: String, balance: Int) throws {
+    convenience init(initWithAllInfo paymentInfo: String, balance: Double) throws {
         self.init()
         guard paymentInfo != "" else {
-            throw FinanceErrors.InvalidPaymentInfo
+            throw FinanceError.InvalidPaymentInfo
         }
         guard balance >= 0 else {
-            throw FinanceErrors.InvalidBalance
+            throw FinanceError.InvalidBalance
         }
         self.paymentInfo = paymentInfo
         self.outstandingBalance = balance
+        self.goodStanding = true
+        if balance > 0 {
+            self.goodStanding = false
+        }
     }
     
     func clearBalance() {
         self.outstandingBalance = 0
+        self.goodStanding = true
+    }
+    
+    func inGoodStanding() -> Bool {
+        return goodStanding!
     }
     
     class func parseClassName() -> String {
@@ -175,6 +191,9 @@ class InsuranceInfo: PFObject, PFSubclassing {
         self.copay = amount
     }
     
+    func isExpired() -> Bool {
+        return expirationDate < NSDate()
+    }
     
     class func parseClassName() ->String {
         return "InsuranceInformation"
