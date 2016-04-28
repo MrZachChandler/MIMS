@@ -111,7 +111,7 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
                 self.records = patientRecords
                 for record in self.records!
                 {
-                    self.patients?.append(record.patient!)
+                    //self.patients?.append(record.patient!)
                     
                 }
                 print(self.records?.count)
