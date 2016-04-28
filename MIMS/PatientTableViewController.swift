@@ -79,8 +79,10 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
         
         let tempRecord = records![indexPath.row]
         if let patient = patients![indexPath.row] {
+            if !patient.dirty {
             cell.bindPatientWithoutData(patient)
             return cell
+            }
         }
         let patient = tempRecord.patient!
         cell.bindPatient(patientToBind: patient) { (patient) in
