@@ -39,7 +39,7 @@ class PatientRecord: PFObject, PFSubclassing {
         get {
             return self["appointments"] as? [Appointment]
         }
-        set {}
+        set { self["appointments"] = newValue! }
     }
     
     //Should only have one treatment object, which can have arrays of prescriptions, immunizations, and surgeries
@@ -54,7 +54,7 @@ class PatientRecord: PFObject, PFSubclassing {
         get {
             return self["comments"] as? [String]
         }
-        set{}
+        set{ self["comments"] = newValue}
     }
     
     //measurements
@@ -97,14 +97,14 @@ class PatientRecord: PFObject, PFSubclassing {
     //scans
     var scansTaken: [Scan]? {
         get {return self["scans"] as? [Scan] }
-        set {}
+        set {self["scans"] = newValue!}
     }
     
     
     //tests
     var testsTaken: [Test]? {
         get {return self["tests"] as? [Test]}
-        set {}
+        set {self["scans"] = newValue}
     }
     
     var attendingPhysician: MIMSUser {
