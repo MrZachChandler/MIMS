@@ -13,6 +13,10 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
 
     var menuButton: UIButton!
     
+    var patients: [Patient]?
+    var records: [PatientRecord]?
+    
+    
     let name = ["Abe Lincon","Billy Manchester","Clyde S. Dale","Doug Chandler","Elvira Moody", "Fransis Ogertree", "Hilary Clinton", "Jacob Jenkins", "Kelly Price", "Low Mill", "Micheal Scott", "No Name", "Oliver Queen"]
     
     let detail0 = ["1(555)234-5678","1(555)234-5678","1(555)234-5678","1(555)234-5678","1(555)234-5678","1(555)234-5678","1(555)234-5678","1(555)234-5678","1(555)234-5678","1(555)234-5678","1(555)234-5678","1(555)234-5678","1(555)234-5678","1(555)234-5678"]
@@ -22,6 +26,8 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        queryTable()
         
         let nib1 = UINib(nibName: "MIMSCell", bundle: nil)
         tableView.registerNib(nib1, forCellReuseIdentifier: "MIMS")
@@ -62,18 +68,28 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return self.name.count
+        return (self.patients?.count)!
     }
     
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("MIMS", forIndexPath: indexPath) as! MIMSTableViewCell
         
-        cell.titleLabel.text = name[indexPath.row]
-        cell.detailLabel1.text = detail0[indexPath.row]
-        cell.detailLabel2.text = detail1[indexPath.row]
-        cell.detailLabel3.text = detail2[indexPath.row]
-        cell.sideInformationLabel.text = detail3[indexPath.row]
+        var tempRecord = patients?[indexPath.row]
+        
+        cell.titleLabel.text = tempRecord?.name
+        cell.detailLabel1.text = tempRecord?.address
+        cell.detailLabel2.text = tempRecord?.birthday
+        cell.detailLabel3.text = tempRecord?.phoneNumber
+        if tempRecord?.gender == true {
+            cell.sideInformationLabel.text = "Male"
+        }
+        else
+        {
+            cell.sideInformationLabel.text = "Female"
+
+        }
+        
         return cell
     }
     
@@ -83,6 +99,26 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         self.performSegueWithIdentifier("Information", sender: tableView)
 
+    }
+    
+    func queryTable() {
+        self.queryPatientRecords()
+    }
+    
+
+    func queryPatientRecords() {
+        ParseClient.queryPatientRecords("doctor", value: MIMSUser.currentUser()!) { (patientRecords, error) in
+            if error == nil && patientRecords != nil
+            {
+                self.records = patientRecords
+                for record in self.records!
+                {
+                    self.patients?.append(record.patient!)
+                    
+                }
+                self.tableView.reloadData()
+            }
+        }
     }
 
 
