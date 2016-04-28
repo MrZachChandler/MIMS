@@ -12,6 +12,7 @@
 		2F7D06081CCA9DF20081F59D /* MIMSCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2F7D06071CCA9DF20081F59D /* MIMSCell.xib */; };
 		2F7D060B1CCA9FA60081F59D /* MIMSTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7D060A1CCA9FA60081F59D /* MIMSTableViewCell.swift */; };
 		2FB8F58B1CCD6AE9002C0E12 /* PatientInformationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FB8F58A1CCD6AE9002C0E12 /* PatientInformationTableViewController.swift */; };
+		2FD137AC1CCE8C6A00FEDC1A /* SelectionListTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FD137AB1CCE8C6A00FEDC1A /* SelectionListTableViewController.swift */; };
 		6787431709933676BEAB7178 /* Pods_MIMS_MIMSTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14CE67DC1A201621FFADB68E /* Pods_MIMS_MIMSTests.framework */; };
 		8F0CD4221CB737F500615490 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F0CD4211CB737F500615490 /* AppDelegate.swift */; };
 		8F0CD4271CB737F500615490 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8F0CD4251CB737F500615490 /* Main.storyboard */; };
@@ -61,6 +62,7 @@
 		2F7D06071CCA9DF20081F59D /* MIMSCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MIMSCell.xib; sourceTree = "<group>"; };
 		2F7D060A1CCA9FA60081F59D /* MIMSTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MIMSTableViewCell.swift; sourceTree = "<group>"; };
 		2FB8F58A1CCD6AE9002C0E12 /* PatientInformationTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatientInformationTableViewController.swift; sourceTree = "<group>"; };
+		2FD137AB1CCE8C6A00FEDC1A /* SelectionListTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectionListTableViewController.swift; sourceTree = "<group>"; };
 		7CB677F43484CB2D4FB2691F /* Pods_MIMS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MIMS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F0CD41E1CB737F400615490 /* MIMS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MIMS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F0CD4211CB737F500615490 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -219,6 +221,7 @@
 			children = (
 				2FB8F58A1CCD6AE9002C0E12 /* PatientInformationTableViewController.swift */,
 				8F27425D1CC9B9B000D7B4B6 /* PatientTableViewController.swift */,
+				2FD137AB1CCE8C6A00FEDC1A /* SelectionListTableViewController.swift */,
 			);
 			name = Patients;
 			sourceTree = "<group>";
@@ -498,6 +501,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2FD137AC1CCE8C6A00FEDC1A /* SelectionListTableViewController.swift in Sources */,
 				8F2742761CCE7AFF00D7B4B6 /* Measurements, Tests, and Scans.swift in Sources */,
 				2FB8F58B1CCD6AE9002C0E12 /* PatientInformationTableViewController.swift in Sources */,
 				8F6AFF881CC6A69D00A8A1F0 /* DashboardTableViewController.swift in Sources */,
