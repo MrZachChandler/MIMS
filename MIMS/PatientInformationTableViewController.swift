@@ -148,6 +148,8 @@ class PatientInformationTableViewController: UITableViewController {
         }
         else
         {
+            cell.detailTextLabel?.text = ""
+            cell.accessoryType = .DisclosureIndicator
             switch flag  {
             case UserTypes.AdminUser.rawValue:
                 cell.textLabel?.text = adminData[indexPath.row]
@@ -176,30 +178,13 @@ class PatientInformationTableViewController: UITableViewController {
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        let cell = tableView.cellForRowAtIndexPath(indexPath)
+        cell?.selected = false
         switch flag {
         case UserTypes.AdminUser.rawValue:
-            if indexPath.section == 0 {
-                if indexPath.row == 0 {
-                    
-                }
-                if indexPath.row == 1 {
-                    
-                }
-                if indexPath.row == 2 {
-                    
-                }
-                if indexPath.row == 3 {
-                    
-                }
-                if indexPath.row == 4 {
-                    
-                }
-                
-            }
-            
          
         
-            if indexPath.section == 1 {
+            if indexPath.section == 2 {
                 //Discharge Patient
                 if indexPath.row == 0 {
                     //ParseClient.dischargePatient(PatientRecord)
@@ -266,34 +251,58 @@ class PatientInformationTableViewController: UITableViewController {
                 
             }
         case UserTypes.OperationalUser.rawValue:
-            if indexPath.section == 0 {
-                
-            }
 
-            if indexPath.section == 1 {
+
+            if indexPath.section == 2 {
                 //request patient test
                 if indexPath.row == 0 {
-                    selectionFlag = 1
+                    selectionFlag = 0
                     self.performSegueWithIdentifier("List", sender: tableView)
                 }
                 //complete patient test
                 if indexPath.row == 1 {
-                    
+                    selectionFlag = 1
+                    self.performSegueWithIdentifier("List", sender: self)
                 }
                 //diagnose symptoms
                 if indexPath.row == 2 {
-                    selectionFlag = 0
+                    selectionFlag = 2
                     self.performSegueWithIdentifier("List", sender: tableView)
                 }
                 //issue treatment
                 if indexPath.row == 3 {
-                    selectionFlag = 2
+                    selectionFlag = 3
                     self.performSegueWithIdentifier("List", sender: tableView)
                 }
                 //persrcibe medication
                 if indexPath.row == 4 {
-                    selectionFlag = 3
+                    selectionFlag = 4
                     self.performSegueWithIdentifier("List", sender: tableView)
+                }
+                if indexPath.row == 5 {
+                    //check patient statius
+                }
+                if indexPath.row == 6 {
+                    let alert = UIAlertController(title: "Transfer patient", message: "Please enter the name of a doctor to transfer the patient to.", preferredStyle: .Alert)
+                    alert.addTextFieldWithConfigurationHandler({ (textField) in
+                        textField.placeholder = "Doctor's name"
+                    })
+                    alert.addAction(UIAlertAction(title: "Cancel", style: .Destructive, handler: nil))
+                    alert.addAction(UIAlertAction(title: "Submit", style: .Default, handler: { (action) in
+                        let doctorName = alert.textFields?.first?.text
+                        ParseClient.transferPatient(toNewDoctorWithName: doctorName!, withPatientRecord: self.patientRecord, completion: { (success, error) in
+                            if !success || error != nil {
+                                //TODO: Present error
+                                var errorMessage: String = ""
+                                if error != nil {
+                                    errorMessage = error!.localizedDescription
+                                }
+                                let alert = getDefaultAlert("Couldn't transfer patient", message: errorMessage, actions: nil, useDefaultAction: true)
+                                self.presentViewController(alert, animated: true, completion: nil)
+                            }
+                        })
+                    }))
+                    self.presentViewController(alert, animated: true, completion: nil)
                 }
             }
         default:

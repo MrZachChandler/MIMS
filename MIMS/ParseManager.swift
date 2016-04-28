@@ -545,11 +545,11 @@ class ParseClient {
     class func transferPatient(toNewDoctorWithName name: String, withPatientRecord record: PatientRecord, completion: (success: Bool, error: NSError?) ->()) {
         do {
             try queryUsers("name", value: name, completion: { (users, error) in
-                if users != nil && error == nil {
+                if users != nil && error == nil && users!.count > 0 {
                     record.attendingPhysician = users!.first!
                     completion(success: true, error: nil)
                 } else {
-                    completion(success: false, error: error!)
+                    completion(success: false, error: error)
                 }
             })
         } catch ParseError.InvalidKey(message: _) {
