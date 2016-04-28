@@ -166,7 +166,7 @@ class AppointmentsTableViewController: UITableViewController, SWRevealViewContro
             appointment = appointments![indexPath.row]
             cell.bindAppointment(appointmentToBind: appointment)
             return cell
-        } else if indexPath.section == 0 && appointments?.count > 0 {
+        } else if indexPath.section == 0 && appointmentsCompleted?.count > 0 {
             appointment = appointmentsCompleted![indexPath.row]
             cell.bindCompletedAppointment(appointmentToBind: appointment)
             return cell
