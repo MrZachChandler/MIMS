@@ -69,7 +69,7 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
         guard patients?.count > 0 else { return 0}
-        return (patients?.count)!
+        return patients!.count
     }
     
     
