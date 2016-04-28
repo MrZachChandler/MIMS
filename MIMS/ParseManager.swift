@@ -85,6 +85,7 @@ class ParseClient {
     class func queryPatientRecords(key: String, value: AnyObject, completion: (patientRecords: [PatientRecord]?, error: NSError?) ->()) {
         let query = PFQuery(className: "PatientRecord")
         query.whereKey(key, equalTo: value)
+        query.includeKey("patient")
         query.findObjectsInBackgroundWithBlock { (patientRecords, error) in
             if patientRecords != nil && error == nil {
                 completion(patientRecords: patientRecords as? [PatientRecord], error: nil)
@@ -218,6 +219,16 @@ class ParseClient {
         }
     }
     
+    private class func checkForPatientDuplicity(checkWithSSN ssn: String, completion: (patientExists: Bool) ->()){
+        try! ParseClient.queryPatients("ssn", value: ssn) { (patients, error) in
+            if error == nil && patients!.count > 0 {
+                completion(patientExists: true)
+            } else {
+                completion(patientExists: false)
+            }
+        }
+    }
+    
     /**
      Method to call when the "Delete patient record" button has been called. It makes the checks for whether or not the patient record is able to be deleted, so no need to worry about checking it yourself.
      
@@ -250,7 +261,7 @@ class ParseClient {
         patient.fetchInBackgroundWithBlock { (updatedPatient, error) in
             if error == nil {
                 let financeData = (updatedPatient as! Patient).financials
-                financeData?.clearBalance()
+                financeData.clearBalance()
                 record.canBeDischarged = true
                 completion(success: true)
             } else {
