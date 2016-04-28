@@ -26,6 +26,10 @@ class PatientInformationTableViewController: UITableViewController {
     var selectionFlag = 0
     //0 = symptoms, 1 = test, 2 = treatment, 3 = medication
     
+    var record: PatientRecord?
+    
+
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,6 +38,9 @@ class PatientInformationTableViewController: UITableViewController {
             flag = ""
             return
         }
+        
+        
+        
         
         flag = userType
 

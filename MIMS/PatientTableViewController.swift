@@ -117,6 +117,7 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
                     self.patients?.append(record.patient!)
                     
                 }
+                print(self.records?.count)
                 self.tableView.reloadData()
             }
         }
@@ -132,6 +133,7 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
             let indexPath:NSIndexPath = self.tableView.indexPathForSelectedRow!
             let detailVC:PatientInformationTableViewController = segue.destinationViewController as! PatientInformationTableViewController
             detailVC.title = name[indexPath.row]
+            detailVC.record = records![indexPath.row]
             
         }
     }
