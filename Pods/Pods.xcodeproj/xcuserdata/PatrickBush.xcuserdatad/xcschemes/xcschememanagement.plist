@@ -49,11 +49,6 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>SQLite.swift.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>SmileTouchID.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -67,6 +62,11 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>0A3E406D569AC4AF20E35CBB1116F836</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>16FB872D0D2D4BA0F378AB34D47CF95F</key>
 		<dict>
 			<key>primary</key>
@@ -77,32 +77,27 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>21084334654BA0BEBAAB0908ED83B17B</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>2C8AA1BAF35413BDB954A1DF93576ED1</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>3F5B63BA212317EDA76B3024D806760C</key>
+		<key>66971E9C3E9AFA7D7AEBE318838715BD</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>55A405CF277C6F4276EBD25B95F3664A</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>9F130C39F88EE87FE34A53FC9A273B0F</key>
+		<key>9AD84BB742448AC87C0C9CC7EB049E17</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 		<key>B272B33F162D6E5C3510BA50ECF2684B</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>BD3F59CB06685116B8B5A473D4FD09EB</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -118,11 +113,6 @@
 			<true/>
 		</dict>
 		<key>E61CE3B6DFA1FE6B3E296965C76C0E10</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>EB53D724894B045A2E3393DB6B87D25B</key>
 		<dict>
 			<key>primary</key>
 			<true/>

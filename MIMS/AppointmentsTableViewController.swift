@@ -264,7 +264,7 @@ extension AppointmentsTableViewController: THDatePickerDelegate {
     func datePickerCancelPressed(datePicker: THDatePickerViewController!) {
         dismissSemiModalView()
     }
-    
+
     func updateText(sender: UIDatePicker) {
         
         let components = NSCalendar.currentCalendar().components(
@@ -290,7 +290,6 @@ extension AppointmentsTableViewController: THDatePickerDelegate {
         let date = formatter.stringFromDate(sender.date)
         self.hourTextField.text = date
     }
-    
     
     /* https://vandadnp.wordpress.com/2014/07/07/swift-convert-unmanaged-to-string/ */
     func convertCfTypeToString(cfValue: Unmanaged<NSString>!) -> String?{

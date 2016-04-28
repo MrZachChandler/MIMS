@@ -10,7 +10,6 @@ PODS:
     - Bolts/Tasks (~> 1.3)
     - Parse (~> 1.9)
   - SmileTouchID (0.1.5)
-  - SQLite.swift (0.10.1)
   - THCalendarDatePicker (1.2.7):
     - KNSemiModalViewController_hons82 (~> 0.4.4)
 
@@ -21,8 +20,7 @@ DEPENDENCIES:
   - Parse
   - ParseUI
   - SmileTouchID
-  - SQLite.swift
-  - THCalendarDatePicker (~> 1.2.6)
+  - THCalendarDatePicker
 
 SPEC CHECKSUMS:
   Bolts: a0058fa3b331c5a1e4402d534f2dae36dbff31e4
@@ -33,9 +31,8 @@ SPEC CHECKSUMS:
   Parse: f51c24d2feb412e4b2d6cc73d37cb24e8d0089bc
   ParseUI: af2eba584799da4a9fbdac0e178662d7438b502e
   SmileTouchID: ad0f96782c57791e9644d5ad0b2d1b087943b3df
-  SQLite.swift: 6a6e4b034efc317ce4e203b6af2d3024fee2b570
   THCalendarDatePicker: a3c3bea65eaf0fdd7044ff5d4886056dc72164fd
 
-PODFILE CHECKSUM: 9670efca22deb86a34babe9f730b4c442c36fe43
+PODFILE CHECKSUM: 20ee2831df52a9f0d0ff811f97145d293480337a
 
-COCOAPODS: 1.0.0.beta.6
+COCOAPODS: 1.0.0.beta.8
