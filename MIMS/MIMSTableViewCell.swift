@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Parse
 
 class MIMSTableViewCell: UITableViewCell {
 
@@ -51,5 +52,53 @@ class MIMSTableViewCell: UITableViewCell {
         self.detailLabel2.text = detail1!
         self.detailLabel3.text = ""
         self.sideInformationLabel.text = ""
+    }
+    
+    func bindPatientWithoutData(patient: Patient) {
+        self.titleLabel.text = patient.name
+        self.detailLabel1.text = patient.address.description
+        let dateFormatter = NSDateFormatter()
+        let dateString = dateFormatter.stringFromDate(patient.birthday)
+        self.detailLabel2.text = dateString
+        //cell.detailLabel3.text = patient.phoneNumber
+        if patient.gender == true {
+            self.sideInformationLabel.text = "Male"
+        }
+        else
+        {
+            self.sideInformationLabel.text = "Female"
+            
+        }
+
+    }
+    func bindPatient(patientToBind patient: Patient, completion: (patient: Patient) ->()){
+        var updatedPatient: Patient!
+        let query = PFQuery(className: "Patient")
+        query.cachePolicy = .CacheThenNetwork
+        query.whereKey("objectId", equalTo: patient.objectId!)
+        query.includeKey("address")
+        query.includeKey("insuranceInfo")
+        query.includeKey("financialData")
+        query.getFirstObjectInBackgroundWithBlock { (patient, error) in
+            if error == nil && patient != nil {
+                updatedPatient = patient as! Patient
+                self.titleLabel.text = updatedPatient.name
+                self.detailLabel1.text = updatedPatient.address.description
+                let dateFormatter = NSDateFormatter()
+                let dateString = dateFormatter.stringFromDate(updatedPatient.birthday)
+                self.detailLabel2.text = dateString
+                //cell.detailLabel3.text = patient.phoneNumber
+                if updatedPatient.gender == true {
+                    self.sideInformationLabel.text = "Male"
+                }
+                else
+                {
+                    self.sideInformationLabel.text = "Female"
+                    
+                }
+
+            }
+            completion(patient: updatedPatient)
+        }
     }
 }
