@@ -89,7 +89,34 @@ class PatientInformationTableViewController: UITableViewController {
 
         if indexPath.section == 0 {
             cell.textLabel?.text = tableData[indexPath.row]
-            cell.detailTextLabel?.text = detailData[indexPath.row]
+            switch indexPath.row {
+            case 0:
+                cell.detailTextLabel?.text = patient.name
+                cell.accessoryType = .None
+                cell.userInteractionEnabled = false
+                break
+            case 1:
+                cell.detailTextLabel?.text = patient.address.description
+                cell.accessoryType = .None
+                cell.userInteractionEnabled = false
+                break
+            case 2:
+                cell.detailTextLabel?.text = patient.phoneNumber
+                cell.accessoryType = .None
+                cell.userInteractionEnabled = false
+                break
+            case 3:
+                if patient.married {
+                    cell.detailTextLabel?.text = "Married"
+                } else {
+                    cell.detailTextLabel?.text = "Single"
+                }
+                cell.accessoryType = .None
+                cell.userInteractionEnabled = false
+                break
+            default:
+                cell.detailTextLabel?.text = ""
+            }
         }
         else
         {
