@@ -235,8 +235,8 @@ class Patient: PFObject, PFSubclassing {
         }
     }
     
-    var phoneNumber: String {
-        get {return self["phone"] as! String}
+    var phoneNumber: String? {
+        get {return self["phone"] as? String}
         set {self["phone"] = newValue}
     }
     
