@@ -86,6 +86,14 @@ class ParseClient {
         let query = PFQuery(className: "PatientRecord")
         //query.whereKey(key, equalTo: value as! MIMSUser)
         query.includeKey("patient")
+        query.includeKey("appointments")
+        query.includeKey("treatments")
+        query.includeKey("comments")
+        query.includeKey("scans")
+        query.includeKey("tests")
+        query.includeKey("measurements")
+        query.includeKey("conditions")
+        query.cachePolicy = .CacheThenNetwork
         query.findObjectsInBackgroundWithBlock { (patientRecords, error) in
             if patientRecords != nil && error == nil {
                 completion(patientRecords: patientRecords as? [PatientRecord], error: nil)
@@ -537,11 +545,11 @@ class ParseClient {
     class func transferPatient(toNewDoctorWithName name: String, withPatientRecord record: PatientRecord, completion: (success: Bool, error: NSError?) ->()) {
         do {
             try queryUsers("name", value: name, completion: { (users, error) in
-                if users != nil && error == nil {
+                if users != nil && error == nil && users!.count > 0 {
                     record.attendingPhysician = users!.first!
                     completion(success: true, error: nil)
                 } else {
-                    completion(success: false, error: error!)
+                    completion(success: false, error: error)
                 }
             })
         } catch ParseError.InvalidKey(message: _) {

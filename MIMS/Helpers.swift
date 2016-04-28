@@ -65,7 +65,7 @@ class Address: PFObject, PFSubclassing {
     }
     
     override var description: String {
-        return "\(street!)\(city!), \(state!) \(zipCode!)"
+        return "\(street!) \(city!), \(state!), \(zipCode!)"
     }
     
     /**

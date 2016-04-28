@@ -57,10 +57,8 @@ class MIMSTableViewCell: UITableViewCell {
     func bindPatientWithoutData(patient: Patient) {
         self.titleLabel.text = patient.name
         self.detailLabel1.text = patient.address.description
-        let dateFormatter = NSDateFormatter()
-        let dateString = dateFormatter.stringFromDate(patient.birthday)
-        self.detailLabel2.text = dateString
-        //cell.detailLabel3.text = patient.phoneNumber
+        self.detailLabel2.text = patient.birthday.getDateForAppointment()
+        self.detailLabel3.text = patient.phoneNumber
         if patient.gender == true {
             self.sideInformationLabel.text = "Male"
         }
@@ -84,10 +82,8 @@ class MIMSTableViewCell: UITableViewCell {
                 updatedPatient = patient as! Patient
                 self.titleLabel.text = updatedPatient.name
                 self.detailLabel1.text = updatedPatient.address.description
-                let dateFormatter = NSDateFormatter()
-                let dateString = dateFormatter.stringFromDate(updatedPatient.birthday)
-                self.detailLabel2.text = dateString
-                //cell.detailLabel3.text = patient.phoneNumber
+                self.detailLabel2.text = updatedPatient.birthday.getDateForAppointment()
+                self.detailLabel3.text = updatedPatient.phoneNumber
                 if updatedPatient.gender == true {
                     self.sideInformationLabel.text = "Male"
                 }
@@ -96,9 +92,8 @@ class MIMSTableViewCell: UITableViewCell {
                     self.sideInformationLabel.text = "Female"
                     
                 }
-
+                completion(patient: updatedPatient)
             }
-            completion(patient: updatedPatient)
         }
     }
 }

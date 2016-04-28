@@ -79,8 +79,10 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
         
         let tempRecord = records![indexPath.row]
         if let patient = patients![indexPath.row] {
+            if !patient.dirty {
             cell.bindPatientWithoutData(patient)
             return cell
+            }
         }
         let patient = tempRecord.patient!
         cell.bindPatient(patientToBind: patient) { (patient) in
@@ -93,7 +95,7 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
         return 90
     }
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        self.performSegueWithIdentifier("Information", sender: tableView)
+        self.performSegueWithIdentifier("Information", sender: self)
 
     }
     

@@ -16,6 +16,8 @@ class PatientInformationTableViewController: UITableViewController {
     
     let actionData = ["Delete Patient Record", "Charge Patient", "Manage Patient Insurence", "Admit Patient", "Discharge Patient" , "Manage Patient Information", "Request Patient Test", "Complete Patient Test", "Diagnose Symptoms","Issue Treatent", "Prescribe Medication", "Check Patient Status", "Transfer Patient"]
     
+    let vitalsData = ["Height", "Weight", "Blood Pressure", "Time Taken"]
+    
     let technicalActionData = ["Complete Patient Test", "Diagnose Symptoms", "Check Patient Status", "Manage Patient Info"]
     let adminData = [ "Discharge Patient", "Manage Patient Info", "Delete Patient Record", "Charge Patient", "Manage Patient Insurence"]
     let operationalData = ["Request Patient Test", "Complete Patient Test", "Diagnose Symptom", "Issue Treatment", "Prescribe Medication","Check Patient Status", "Transfer Patient"]
@@ -61,13 +63,17 @@ class PatientInformationTableViewController: UITableViewController {
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 2
+        return 3
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
         if section == 0 {
             return tableData.count
+        }
+        
+        if section == 1 {
+            return vitalsData.count
         }
 
         else if flag == UserTypes.AdminUser.rawValue
@@ -93,10 +99,61 @@ class PatientInformationTableViewController: UITableViewController {
 
         if indexPath.section == 0 {
             cell.textLabel?.text = tableData[indexPath.row]
-            cell.detailTextLabel?.text = detailData[indexPath.row]
+            switch indexPath.row {
+            case 0:
+                cell.detailTextLabel?.text = patient.name
+                cell.accessoryType = .None
+                cell.userInteractionEnabled = false
+                break
+            case 1:
+                cell.detailTextLabel?.text = patient.address.description
+                cell.accessoryType = .None
+                cell.userInteractionEnabled = false
+                break
+            case 2:
+                cell.detailTextLabel?.text = patient.phoneNumber
+                cell.accessoryType = .None
+                cell.userInteractionEnabled = false
+                break
+            case 3:
+                if patient.married {
+                    cell.detailTextLabel?.text = "Married"
+                } else {
+                    cell.detailTextLabel?.text = "Single"
+                }
+                cell.accessoryType = .None
+                cell.userInteractionEnabled = false
+                break
+            default:
+                cell.detailTextLabel?.text = ""
+            }
+        } else if indexPath.section == 1 {
+            cell.textLabel?.text = vitalsData[indexPath.row]
+            switch indexPath.row {
+            case 0:
+                cell.detailTextLabel?.text = patientRecord.measurements?.height
+                cell.accessoryType = .None
+                break
+            case 1:
+                cell.detailTextLabel?.text = String(patientRecord.measurements?.weight)
+                cell.accessoryType = .None
+                break
+            case 2:
+                cell.detailTextLabel?.text = patientRecord.measurements?.bloodPressure
+                cell.accessoryType = .None
+                break
+            case 3:
+                cell.detailTextLabel?.text = patientRecord.measurements?.updatedAt?.getDateForAppointment()
+                cell.accessoryType = .None
+                break
+            default:
+                break
+            }
         }
         else
         {
+            cell.detailTextLabel?.text = ""
+            cell.accessoryType = .DisclosureIndicator
             switch flag  {
             case UserTypes.AdminUser.rawValue:
                 cell.textLabel?.text = adminData[indexPath.row]
@@ -114,11 +171,10 @@ class PatientInformationTableViewController: UITableViewController {
     override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if section == 0 {
             return "Information"
-            
+        } else if section == 1 {
+            return "Vitals"
         }
-        else {
-            return "Actions"
-        }
+        return "Actions"
     }
     
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
@@ -126,30 +182,13 @@ class PatientInformationTableViewController: UITableViewController {
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        let cell = tableView.cellForRowAtIndexPath(indexPath)
+        cell?.selected = false
         switch flag {
         case UserTypes.AdminUser.rawValue:
-            if indexPath.section == 0 {
-                if indexPath.row == 0 {
-                    
-                }
-                if indexPath.row == 1 {
-                    
-                }
-                if indexPath.row == 2 {
-                    
-                }
-                if indexPath.row == 3 {
-                    
-                }
-                if indexPath.row == 4 {
-                    
-                }
-                
-            }
-            
          
         
-            if indexPath.section == 1 {
+            if indexPath.section == 2 {
                 //Discharge Patient
                 if indexPath.row == 0 {
                     //ParseClient.dischargePatient(PatientRecord)
@@ -216,34 +255,58 @@ class PatientInformationTableViewController: UITableViewController {
                 
             }
         case UserTypes.OperationalUser.rawValue:
-            if indexPath.section == 0 {
-                
-            }
 
-            if indexPath.section == 1 {
+
+            if indexPath.section == 2 {
                 //request patient test
                 if indexPath.row == 0 {
-                    selectionFlag = 1
+                    selectionFlag = 0
                     self.performSegueWithIdentifier("List", sender: tableView)
                 }
                 //complete patient test
                 if indexPath.row == 1 {
-                    
+                    selectionFlag = 1
+                    self.performSegueWithIdentifier("List", sender: self)
                 }
                 //diagnose symptoms
                 if indexPath.row == 2 {
-                    selectionFlag = 0
+                    selectionFlag = 2
                     self.performSegueWithIdentifier("List", sender: tableView)
                 }
                 //issue treatment
                 if indexPath.row == 3 {
-                    selectionFlag = 2
+                    selectionFlag = 3
                     self.performSegueWithIdentifier("List", sender: tableView)
                 }
                 //persrcibe medication
                 if indexPath.row == 4 {
-                    selectionFlag = 3
+                    selectionFlag = 4
                     self.performSegueWithIdentifier("List", sender: tableView)
+                }
+                if indexPath.row == 5 {
+                    //check patient statius
+                }
+                if indexPath.row == 6 {
+                    let alert = UIAlertController(title: "Transfer patient", message: "Please enter the name of a doctor to transfer the patient to.", preferredStyle: .Alert)
+                    alert.addTextFieldWithConfigurationHandler({ (textField) in
+                        textField.placeholder = "Doctor's name"
+                    })
+                    alert.addAction(UIAlertAction(title: "Cancel", style: .Destructive, handler: nil))
+                    alert.addAction(UIAlertAction(title: "Submit", style: .Default, handler: { (action) in
+                        let doctorName = alert.textFields?.first?.text
+                        ParseClient.transferPatient(toNewDoctorWithName: doctorName!, withPatientRecord: self.patientRecord, completion: { (success, error) in
+                            if !success || error != nil {
+                                //TODO: Present error
+                                var errorMessage: String = ""
+                                if error != nil {
+                                    errorMessage = error!.localizedDescription
+                                }
+                                let alert = getDefaultAlert("Couldn't transfer patient", message: errorMessage, actions: nil, useDefaultAction: true)
+                                self.presentViewController(alert, animated: true, completion: nil)
+                            }
+                        })
+                    }))
+                    self.presentViewController(alert, animated: true, completion: nil)
                 }
             }
         default:
