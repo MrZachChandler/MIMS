@@ -16,6 +16,8 @@ class PatientInformationTableViewController: UITableViewController {
     
     let actionData = ["Delete Patient Record", "Charge Patient", "Manage Patient Insurence", "Admit Patient", "Discharge Patient" , "Manage Patient Information", "Request Patient Test", "Complete Patient Test", "Diagnose Symptoms","Issue Treatent", "Prescribe Medication", "Check Patient Status", "Transfer Patient"]
     
+    let vitalsData = ["Height", "Weight", "Blood Pressure", "Time Taken"]
+    
     let technicalActionData = ["Complete Patient Test", "Diagnose Symptoms", "Check Patient Status", "Manage Patient Info"]
     let adminData = [ "Discharge Patient", "Manage Patient Info", "Delete Patient Record", "Charge Patient", "Manage Patient Insurence"]
     let operationalData = ["Request Patient Test", "Complete Patient Test", "Diagnose Symptom", "Issue Treatment", "Prescribe Medication","Check Patient Status", "Transfer Patient"]
@@ -57,13 +59,17 @@ class PatientInformationTableViewController: UITableViewController {
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 2
+        return 3
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
         if section == 0 {
             return tableData.count
+        }
+        
+        if section == 1 {
+            return vitalsData.count
         }
 
         else if flag == UserTypes.AdminUser.rawValue
@@ -117,6 +123,28 @@ class PatientInformationTableViewController: UITableViewController {
             default:
                 cell.detailTextLabel?.text = ""
             }
+        } else if indexPath.section == 1 {
+            cell.textLabel?.text = vitalsData[indexPath.row]
+            switch indexPath.row {
+            case 0:
+                cell.detailTextLabel?.text = patientRecord.measurements?.height
+                cell.accessoryType = .None
+                break
+            case 1:
+                cell.detailTextLabel?.text = String(patientRecord.measurements?.weight)
+                cell.accessoryType = .None
+                break
+            case 2:
+                cell.detailTextLabel?.text = patientRecord.measurements?.bloodPressure
+                cell.accessoryType = .None
+                break
+            case 3:
+                cell.detailTextLabel?.text = patientRecord.measurements?.updatedAt?.getDateForAppointment()
+                cell.accessoryType = .None
+                break
+            default:
+                break
+            }
         }
         else
         {
@@ -137,11 +165,10 @@ class PatientInformationTableViewController: UITableViewController {
     override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if section == 0 {
             return "Information"
-            
+        } else if section == 1 {
+            return "Vitals"
         }
-        else {
-            return "Actions"
-        }
+        return "Actions"
     }
     
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
