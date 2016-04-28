@@ -279,7 +279,7 @@ class Appointment: PFObject, PFSubclassing {
     
     var completed: Bool {
         get {return self["completed"] as! Bool}
-        set{}
+        set{ self["completed"] = newValue}
     }
     
     var associatedPatient: Patient {

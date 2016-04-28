@@ -26,4 +26,30 @@ class MIMSTableViewCell: UITableViewCell {
     @IBOutlet weak var detailLabel2: UILabel!
     @IBOutlet weak var detailLabel3: UILabel!
     @IBOutlet weak var sideInformationLabel: UILabel!
+    
+    func bindAppointment(appointmentToBind appointment: Appointment) {
+        let patient = appointment.associatedPatient
+        let scheduledTime = appointment.timeScheduled
+        let detail0 = scheduledTime?.getDateForAppointment()
+        let detail1 = scheduledTime?.getTimeForAppointment()
+        
+        self.titleLabel.text = patient.name
+        self.detailLabel1.text = detail0!
+        self.detailLabel2.text = detail1!
+        self.detailLabel3.text = ""
+        self.sideInformationLabel.text = ""
+    }
+    
+    func bindCompletedAppointment(appointmentToBind appointment: Appointment) {
+        let patient = appointment.associatedPatient
+        let scheduledTime = appointment.timeScheduled
+        let detail0 = scheduledTime?.getDateForAppointment()
+        let detail1 = scheduledTime?.getTimeForAppointment()
+        
+        self.titleLabel.text = patient.name
+        self.detailLabel1.text = detail0!
+        self.detailLabel2.text = detail1!
+        self.detailLabel3.text = ""
+        self.sideInformationLabel.text = ""
+    }
 }

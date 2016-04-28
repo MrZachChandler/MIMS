@@ -89,4 +89,18 @@ extension NSDate {
         //Return Short Time String
         return timeString
     }
+    
+}
+
+func getDefaultAlert(title: String, message: String, actions: [UIAlertAction]?, useDefaultAction: Bool) -> UIAlertController {
+    let alert = UIAlertController(title: title, message: message, preferredStyle: .Alert)
+    if useDefaultAction {
+        let action = UIAlertAction(title: "Dismiss", style: .Cancel, handler: nil)
+        alert.addAction(action)
+        return alert
+    }
+    for action in actions! {
+        alert.addAction(action)
+    }
+    return alert
 }

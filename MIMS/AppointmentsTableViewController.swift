@@ -13,6 +13,7 @@ class AppointmentsTableViewController: UITableViewController, SWRevealViewContro
 
     var menuButton: UIButton!
     var appointments: [Appointment]?
+    var appointmentsCompleted: [Appointment]?
     var appointmentEdited: Appointment?
     
     lazy var datePicker:THDatePickerViewController = {
@@ -79,16 +80,30 @@ class AppointmentsTableViewController: UITableViewController, SWRevealViewContro
         
         self.tableView.tableFooterView = UIView()
         
-        self.queryAppointments()
+        self.queryTable()
         
         let nib1 = UINib(nibName: "MIMSCell", bundle: nil)
         tableView.registerNib(nib1, forCellReuseIdentifier: "MIMS")
+    }
+    
+    func queryTable() {
+        self.queryAppointments()
+        self.queryCompletedAppointments()
     }
 
     func queryAppointments() {
         ParseClient.queryAppointments { (appointments, error) in
             if error == nil && appointments != nil {
                 self.appointments = appointments
+                self.tableView.reloadData()
+            }
+        }
+    }
+    
+    func queryCompletedAppointments() {
+        ParseClient.queryAppointments("completed", value: true) { (appointments, error) in
+            if error == nil && appointments != nil {
+                self.appointmentsCompleted = appointments
                 self.tableView.reloadData()
             }
         }
@@ -102,33 +117,66 @@ class AppointmentsTableViewController: UITableViewController, SWRevealViewContro
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 1
+        if appointments?.count > 0 && appointmentsCompleted?.count > 0 {
+            return 2
+        } else if appointments?.count > 0 || appointmentsCompleted?.count > 0 {
+            return 1
+        } else {
+            return 0
+        }
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
         //return self.name.count
-        guard appointments != nil else {
+        if section == 0 && appointments?.count > 0 {
+            return appointments!.count
+        } else if section == 0 && appointmentsCompleted?.count > 0 {
+            return appointmentsCompleted!.count
+        } else if section == 1 {
+            return appointmentsCompleted!.count
+        } else {
             return 0
         }
-        return appointments!.count
     }
     
+    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        switch section {
+        case 0:
+            if appointments?.count > 0 {
+                return "Upcoming Appointments"
+            }
+            if appointmentsCompleted?.count > 0 {
+                return "Completed Appointments"
+            }
+            break
+        case 1:
+            return "Completed Appointments"
+        default:
+            return ""
+        }
+        return ""
+    }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("MIMS", forIndexPath: indexPath) as! MIMSTableViewCell
         
-        let appointment = appointments![indexPath.row]
-        let patient = appointment.associatedPatient
-        let scheduledTime = appointment.timeScheduled
-        let detail0 = scheduledTime?.getDateForAppointment()
-        let detail1 = scheduledTime?.getTimeForAppointment()
+        var appointment: Appointment!
+        if indexPath.section == 0 && appointments?.count > 0 {
+            appointment = appointments![indexPath.row]
+            cell.bindAppointment(appointmentToBind: appointment)
+            return cell
+        } else if indexPath.section == 0 && appointments?.count > 0 {
+            appointment = appointmentsCompleted![indexPath.row]
+            cell.bindCompletedAppointment(appointmentToBind: appointment)
+            return cell
+        } else if indexPath.section == 1 {
+            appointment = appointmentsCompleted![indexPath.row]
+            cell.bindCompletedAppointment(appointmentToBind: appointment)
+            return cell
+        }
         
-        cell.titleLabel.text = patient.name
-        cell.detailLabel1.text = detail0!
-        cell.detailLabel2.text = detail1!
-        cell.detailLabel3.text = detail2.first
-        cell.sideInformationLabel.text = detail3.first
+
         return cell
     }
     
@@ -154,10 +202,12 @@ class AppointmentsTableViewController: UITableViewController, SWRevealViewContro
                 ParseClient.deleteObject(appointment) { (success, error) in
                     if !success {
                         //TODO: Report an error
+                        let alert = getDefaultAlert("Couldn't delete appointment", message: "Please try again", actions: nil, useDefaultAction: true)
+                        self.presentViewController(alert, animated: true, completion: nil)
                     }
                 }
             })
-            let goBackAction = UIAlertAction(title: "Don't Cancel Appointment", style: UIAlertActionStyle.Cancel, handler: nil)
+            let goBackAction = UIAlertAction(title: "Don't cancel appointment", style: UIAlertActionStyle.Cancel, handler: nil)
 
             shareMenu.addAction(goBackAction)
             shareMenu.addAction(cancelAction)
@@ -167,13 +217,18 @@ class AppointmentsTableViewController: UITableViewController, SWRevealViewContro
         })
         let completeAction = UITableViewRowAction(style: UITableViewRowActionStyle.Normal, title: "Complete" , handler: { (action:UITableViewRowAction!, indexPath:NSIndexPath!) -> Void in
             // 2
-            let shareMenu = UIAlertController(title: nil, message: "Complete the Appointment?", preferredStyle: .ActionSheet)
+            let shareMenu = UIAlertController(title: nil, message: "Complete the appointment?", preferredStyle: .ActionSheet)
             
             let doneAction = UIAlertAction(title: "Finish!", style: UIAlertActionStyle.Default, handler: {(action) in
                 guard let appointment = self.appointments?[indexPath.row] else {
                     return
                 }
                 appointment.markAsCompleted()
+                appointment.saveInBackgroundWithBlock({ (success, error) in
+                    if success {
+                        self.queryTable()
+                    }
+                })
             })
             let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil)
 
@@ -243,6 +298,7 @@ extension AppointmentsTableViewController: THDatePickerDelegate {
             self.hourDatePicker.addTarget(self, action: #selector(AppointmentsTableViewController.updateText(_:)), forControlEvents: .AllEvents)
             self.hourTextField = textField
         }
+        hourController.addAction(UIAlertAction(title: "Cancel", style: .Destructive, handler: nil))
         hourController.addAction(UIAlertAction(title: "Reschedule", style: .Default, handler: { (action) in
             self.tableView.endEditing(true)
             self.newlySelectedDate = self.hourDatePicker.date
@@ -252,12 +308,12 @@ extension AppointmentsTableViewController: THDatePickerDelegate {
                     self.queryAppointments()
                 } else {
                     //TODO: Present alert for unable to complete request
+                    let alert = getDefaultAlert("Uh oh, couldn't save new appointment time.", message: "", actions: nil, useDefaultAction: true)
+                    self.presentViewController(alert, animated: true, completion: nil)
                 }
             })
         }))
-        hourController.addAction(UIAlertAction(title: "Cancel", style: .Destructive, handler: nil))
         self.presentViewController(hourController, animated: true, completion: nil)
-
         
     }
     
@@ -282,7 +338,6 @@ extension AppointmentsTableViewController: THDatePickerDelegate {
             sender.setDate(NSCalendar.currentCalendar().dateFromComponents(components)!, animated: true)
         }
         else {
-            print("Everything is good.")
         }
         
         let formatter = NSDateFormatter()
