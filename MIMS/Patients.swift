@@ -104,7 +104,7 @@ class PatientRecord: PFObject, PFSubclassing {
     //tests
     var testsTaken: [Test]? {
         get {return self["tests"] as? [Test]}
-        set {self["scans"] = newValue}
+        set {self["tests"] = newValue}
     }
     
     var attendingPhysician: MIMSUser {

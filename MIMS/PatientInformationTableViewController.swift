@@ -26,6 +26,9 @@ class PatientInformationTableViewController: UITableViewController {
     var selectionFlag = 0
     //0 = symptoms, 1 = test, 2 = treatment, 3 = medication
     
+    var patient: Patient!
+    var patientRecord: PatientRecord!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()

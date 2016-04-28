@@ -95,7 +95,7 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
         return 90
     }
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        self.performSegueWithIdentifier("Information", sender: tableView)
+        self.performSegueWithIdentifier("Information", sender: self)
 
     }
     
@@ -124,7 +124,9 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
         if segue.identifier == "Information" {
             let indexPath:NSIndexPath = self.tableView.indexPathForSelectedRow!
             let detailVC:PatientInformationTableViewController = segue.destinationViewController as! PatientInformationTableViewController
-            detailVC.title = name[indexPath.row]
+            detailVC.title = patients![indexPath.row]?.name
+            detailVC.patient = patients![indexPath.row]
+            detailVC.patientRecord = records![indexPath.row]
             
         }
     }

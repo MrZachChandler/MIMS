@@ -86,6 +86,14 @@ class ParseClient {
         let query = PFQuery(className: "PatientRecord")
         //query.whereKey(key, equalTo: value as! MIMSUser)
         query.includeKey("patient")
+        query.includeKey("appointments")
+        query.includeKey("treatments")
+        query.includeKey("comments")
+        query.includeKey("scans")
+        query.includeKey("tests")
+        query.includeKey("measurements")
+        query.includeKey("conditions")
+        query.cachePolicy = .CacheThenNetwork
         query.findObjectsInBackgroundWithBlock { (patientRecords, error) in
             if patientRecords != nil && error == nil {
                 completion(patientRecords: patientRecords as? [PatientRecord], error: nil)
