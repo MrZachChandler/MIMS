@@ -13,7 +13,7 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
 
     var menuButton: UIButton!
     
-    var patients: [Patient]?
+    var patients: [Int: Patient]?
     var records: [PatientRecord]?
     
     
@@ -49,6 +49,7 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
         
         self.setNeedsStatusBarAppearanceUpdate()
+        self.tableView.tableFooterView = UIView()
         // Do any additional setup after loading the view.
     }
     
@@ -68,29 +69,23 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        guard patients?.count > 0 else { return 0}
-        return patients!.count
+        guard records?.count > 0 else { return 0}
+        return records!.count
     }
     
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("MIMS", forIndexPath: indexPath) as! MIMSTableViewCell
         
-        let tempRecord = patients?[indexPath.row]
-        
-        cell.titleLabel.text = tempRecord?.name
-        cell.detailLabel1.text = tempRecord?.address.description
-        cell.detailLabel2.text = tempRecord?.birthday.description
-        cell.detailLabel3.text = tempRecord?.phoneNumber
-        if tempRecord?.gender == true {
-            cell.sideInformationLabel.text = "Male"
+        let tempRecord = records![indexPath.row]
+        if let patient = patients![indexPath.row] {
+            cell.bindPatientWithoutData(patient)
+            return cell
         }
-        else
-        {
-            cell.sideInformationLabel.text = "Female"
-
+        let patient = tempRecord.patient!
+        cell.bindPatient(patientToBind: patient) { (patient) in
+            self.patients![indexPath.row] = patient
         }
-        
         return cell
     }
     
