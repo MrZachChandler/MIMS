@@ -120,28 +120,28 @@ class Condition: PFObject, PFSubclassing {
         get {
             return self["disease"] as? [String]
         }
-        set {}
+        set {self["disease"] = newValue}
     }
     
     var allergies: [String]? {
         get {
             return self["allergies"] as? [String]
         }
-        set {}
+        set {self["allergies"] = newValue}
     }
     
     var disorders: [String]? {
         get {
             return self["disorders"] as? [String]
         }
-        set {}
+        set {self["disorders"] = newValue}
     }
     
     var causeOfDeath: String? {
         get {
             return self["causeOfDeath"] as? String
         }
-        set {}
+        set {self["causeOfDeath"] = newValue}
     }
     
     /**

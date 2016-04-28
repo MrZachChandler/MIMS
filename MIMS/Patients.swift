@@ -165,97 +165,87 @@ enum PatientError: ErrorType {
  */
 class Patient: PFObject, PFSubclassing {
     
-    var name: String? {
+    var name: String {
         get {
-            return self["name"] as? String
+            return self["name"] as! String
         }
         set {
-            if newValue?.characters.count > 0 {
-                self["name"] = newValue!
+            if newValue.characters.count > 0 {
+                self["name"] = newValue
             }
         }
     }
     
-    var married: Bool? {
+    var married: Bool {
         get {
-            return self["maritialStatus"] as? Bool
+            return self["maritialStatus"] as! Bool
         }
         set {
-            if newValue != nil {
-                self["maritialStatus"] = newValue!
-            }
+            self["maritialStatus"] = newValue
         }
     }
     
     //Male is 1, female is 0
-    var gender: Bool? {
+    var gender: Bool {
         get {
-            return self["gender"] as? Bool
+            return self["gender"] as! Bool
         }
         set {
-            if newValue != nil {
-                self["gender"] = newValue!
+            self["gender"] = newValue
+        }
+    }
+    
+    var birthday: NSDate {
+        get {
+            return self["birthday"] as! NSDate
+        }
+        set {
+            if newValue <= NSDate() {
+                self["birthday"] = newValue
             }
         }
     }
     
-    var birthday: NSDate? {
+    var ssn: String {
         get {
-            return self["birthday"] as? NSDate
+            return self["ssn"] as! String
         }
         set {
-            if newValue != nil && newValue <= NSDate() {
-                self["birthday"] = newValue!
+            if newValue.characters.count == 9 {
+                self["ssn"] = newValue
             }
         }
     }
     
-    var ssn: String? {
+    var address: Address {
         get {
-            return self["ssn"] as? String
+            return self["address"] as! Address
         }
         set {
-            if newValue?.characters.count == 9 {
-                self["ssn"] = newValue!
-            }
+            self["address"] = newValue
         }
     }
     
-    var address: Address? {
+    var insurance: InsuranceInfo {
         get {
-            return self["address"] as? Address
+            return self["insuranceInfo"] as! InsuranceInfo
         }
         set {
-            if newValue != nil {
-                self["address"] = newValue!
-            }
+            self["insuranceInfo"] = newValue
         }
     }
     
-    var insurance: InsuranceInfo? {
-        get {
-            return self["insuranceInfo"] as? InsuranceInfo
-        }
-        set {
-            if newValue != nil {
-                self["insuranceInfo"] = newValue!
-            }
-        }
+    var phoneNumber: String {
+        get {return self["phone"] as! String}
+        set {self["phone"] = newValue}
     }
     
-    var phoneNumber: String? {
-        get {return self["phone"] as? String}
-        set {if newValue != nil {self["phone"] = newValue!}}
-    }
-    
-    var financials: FinancialInformation? {
+    var financials: FinancialInformation {
         get {
-            return self["financialData"] as? FinancialInformation
+            return self["financialData"] as! FinancialInformation
         }
         set {
-            if newValue != nil {
-                self["financialData"] = newValue!
-            }
+            self["financialData"] = newValue
         }
     }
     
