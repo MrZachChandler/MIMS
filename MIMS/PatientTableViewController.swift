@@ -68,18 +68,19 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return (self.patients?.count)!
+        guard patients?.count > 0 else { return 0}
+        return (patients?.count)!
     }
     
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("MIMS", forIndexPath: indexPath) as! MIMSTableViewCell
         
-        var tempRecord = patients?[indexPath.row]
+        let tempRecord = patients?[indexPath.row]
         
         cell.titleLabel.text = tempRecord?.name
-        cell.detailLabel1.text = tempRecord?.address
-        cell.detailLabel2.text = tempRecord?.birthday
+        cell.detailLabel1.text = tempRecord?.address.description
+        cell.detailLabel2.text = tempRecord?.birthday.description
         cell.detailLabel3.text = tempRecord?.phoneNumber
         if tempRecord?.gender == true {
             cell.sideInformationLabel.text = "Male"
