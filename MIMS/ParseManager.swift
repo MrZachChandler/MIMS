@@ -123,9 +123,24 @@ class ParseClient {
     class func queryAppointments(completion: (appointments: [Appointment]?, error: NSError?) ->()) {
         let query = PFQuery(className: "Appointment")
         query.whereKey("doctor", equalTo: MIMSUser.currentUser()!)
+        query.whereKey("completed", notEqualTo: true)
         query.includeKey("patient")
         query.findObjectsInBackgroundWithBlock { (appointments, error) in
-            if error == nil && appointments!.count > 0 {
+            if error == nil && appointments != nil {
+                completion(appointments: appointments as? [Appointment], error: nil)
+            } else {
+                completion(appointments: nil, error: error!)
+            }
+        }
+    }
+    
+    class func queryAppointments(key: String, value: AnyObject, completion: (appointments: [Appointment]?, error: NSError?) ->()) {
+        let query = PFQuery(className: "Appointment")
+        query.whereKey("doctor", equalTo: MIMSUser.currentUser()!)
+        query.whereKey(key, equalTo: value)
+        query.includeKey("patient")
+        query.findObjectsInBackgroundWithBlock { (appointments, error) in
+            if error == nil && appointments != nil {
                 completion(appointments: appointments as? [Appointment], error: nil)
             } else {
                 completion(appointments: nil, error: error!)
