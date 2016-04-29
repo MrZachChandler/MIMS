@@ -131,7 +131,7 @@ class PatientInformationTableViewController: UITableViewController {
                 cell.accessoryType = .None
                 break
             case 1:
-                cell.detailTextLabel?.text = String(patientRecord.measurements?.weight)
+                cell.detailTextLabel?.text = String(patientRecord.measurements!.weight!)
                 cell.accessoryType = .None
                 break
             case 2:

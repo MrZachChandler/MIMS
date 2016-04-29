@@ -15,7 +15,7 @@ class AdmitPatientTableViewController: UITableViewController {
     let address = ["Street", "City", "State", "Zip Code"]
     let insuranceInformation = ["PaymentInformation", "Experation Date", "Mem ID", "Group ID", "Copay" ]
     let vitals = ["Height: ft","Height: in", "Weight: lb", "BP:Systolic", "BP:Diastolic"]
-    let appointmentInformation = ["Time", "Data"]
+    let appointmentInformation = ["Time", "Date"]
     
     //patient
     var name = ""

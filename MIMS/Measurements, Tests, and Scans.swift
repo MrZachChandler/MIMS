@@ -76,7 +76,7 @@ class Measurement: PFObject, PFSubclassing {
     }
     
     var bloodPressure: String {
-        return "\(String(systolic!))/\(String(diastolic!)))" ?? ""
+        return "\(String(systolic!))/\(String(diastolic!))" ?? ""
     }
     
     private var feet: Int? {
