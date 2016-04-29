@@ -10,16 +10,19 @@ import UIKit
 
 class SelectionListTableViewController: UITableViewController {
 
+    var patient: Patient!
+    var patientRecord: PatientRecord!
+    
     var flag = 0;
     //0 = symptoms, 1 = test, 2 = treatment, 3 = medication
     var tableData = [String]()
-    
+    var sendingResults = [String]()
     var checked = [Bool]()
     
-    let treatment = ["treatment","treatment","treatment","treatment","treatment","treatment","treatment","treatment","treatment"]
-    let medication = ["Medication","Medication","Medication","Medication","Medication","Medication","Medication","Medication","Medication"]
-    let test = ["test","test","test","test","test","test","test","test","test","test","test","test","test","test","test"]
-    let symptoms = ["Symptoms","Symptoms","Symptoms","Symptoms","Symptoms","Symptoms","Symptoms","Symptoms","Symptoms","Symptoms","Symptoms"]
+    let treatment = ["treatment1","treatment2","treatment3","treatment4","treatment5","treatment6","treatment7","treatment8","treatment9"]
+    let medication = ["Medication1","Medication2","Medication3","Medication4","Medication5","Medication6","Medication7","Medication8","Medication9"]
+    let test = ["test1","test2","test3","test4","test5","test6","test7","test8","test","test9","test10","test11","test12","test13","test14"]
+    let symptoms = ["Symptoms1","Symptoms2","Symptoms3","Symptoms4","Symptoms5","Symptoms6","Symptoms7","Symptoms8","Symptoms9","Symptoms10","Symptoms11"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,7 +38,6 @@ class SelectionListTableViewController: UITableViewController {
         default:
             tableData = medication
         }
-        
         let save = UIBarButtonItem(title: "Save", style: .Plain, target: self, action: #selector(SelectionListTableViewController.saveTapped(_:)))
         
         self.navigationItem.setRightBarButtonItem(save, animated: true)
@@ -51,7 +53,20 @@ class SelectionListTableViewController: UITableViewController {
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
     }
     @IBAction func saveTapped(sender: AnyObject) {
-        
+        switch flag {
+        case 0:
+            //symptoms
+            break
+        case 1:
+            ParseClient.addPatientTests(self.sendingResults, toPatientRecord: patientRecord)
+        case 2:
+             //treatment
+            break
+        case 3:
+            tableData = medication
+        default:
+            tableData = medication
+        }
         
     }
     
@@ -89,9 +104,14 @@ class SelectionListTableViewController: UITableViewController {
             if cell.accessoryType == .Checkmark {
                 cell.accessoryType = .None
                 checked[indexPath.row] = false
-            } else {
+                if let index = sendingResults.indexOf(tableData[indexPath.row]) {
+                    self.sendingResults.removeAtIndex(index)
+                }
+            }
+            else {
                 cell.accessoryType = .Checkmark
                 checked[indexPath.row] = true
+                sendingResults.append(tableData[indexPath.row])
             }
         }    
     }

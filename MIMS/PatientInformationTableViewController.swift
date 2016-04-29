@@ -187,7 +187,7 @@ class PatientInformationTableViewController: UITableViewController {
             if indexPath.section == 2 {
                 //Discharge Patient
                 if indexPath.row == 0 {
-                    //ParseClient.dischargePatient(PatientRecord)
+                    ParseClient.dischargePatient(self.patientRecord)
                 }
                 //manage patient information
                 if indexPath.row == 1 {
@@ -198,6 +198,9 @@ class PatientInformationTableViewController: UITableViewController {
                     let deleteAlert = UIAlertController(title: "Delete Patient Record", message: "All data will be lost.", preferredStyle: UIAlertControllerStyle.Alert)
                     
                     deleteAlert.addAction(UIAlertAction(title: "Continue", style: .Default, handler: { (action: UIAlertAction!) in
+                        ParseClient.deletePatient(withPatientRecord: self.patientRecord, completion: { (success, error) in
+                            
+                        })
                         
                     }))
                     
@@ -213,7 +216,9 @@ class PatientInformationTableViewController: UITableViewController {
                     let chargeAlert = UIAlertController(title: "Charge Patient", message: message, preferredStyle: UIAlertControllerStyle.Alert)
                     
                     chargeAlert.addAction(UIAlertAction(title: "Okay", style: .Default, handler: { (action: UIAlertAction!) in
-                        
+                        ParseClient.chargePatient(fromPatientRecord: self.patientRecord, andPatient: self.patient, completion: { (success) in
+                            
+                        })
                     }))
                     
                     chargeAlert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: { (action: UIAlertAction!) in
@@ -369,6 +374,8 @@ class PatientInformationTableViewController: UITableViewController {
                 
             }
             detailVC.navigationItem.backBarButtonItem?.title = "Back"
+            detailVC.patientRecord = self.patientRecord
+            detailVC.patient = self.patient
         }
     }
     
