@@ -193,7 +193,7 @@ class PatientInformationTableViewController: UITableViewController {
             if indexPath.section == 2 {
                 //Discharge Patient
                 if indexPath.row == 0 {
-                    //ParseClient.dischargePatient(PatientRecord)
+                    ParseClient.dischargePatient(self.patientRecord)
                 }
                 //manage patient information
                 if indexPath.row == 1 {
@@ -204,6 +204,10 @@ class PatientInformationTableViewController: UITableViewController {
                     let deleteAlert = UIAlertController(title: "Delete Patient Record", message: "All data will be lost.", preferredStyle: UIAlertControllerStyle.Alert)
                     
                     deleteAlert.addAction(UIAlertAction(title: "Continue", style: .Default, handler: { (action: UIAlertAction!) in
+                        ParseClient.deletePatient(withPatientRecord: self.patientRecord, completion: { (success, error) in
+                            let vc = DashboardTableViewController()
+                            self.presentViewController(vc, animated: true, completion: nil)
+                        })
                         
                     }))
                     
@@ -219,7 +223,9 @@ class PatientInformationTableViewController: UITableViewController {
                     let chargeAlert = UIAlertController(title: "Charge Patient", message: message, preferredStyle: UIAlertControllerStyle.Alert)
                     
                     chargeAlert.addAction(UIAlertAction(title: "Okay", style: .Default, handler: { (action: UIAlertAction!) in
-                        
+                        ParseClient.chargePatient(fromPatientRecord: self.patientRecord, andPatient: self.patient, completion: { (success) in
+                            
+                        })
                     }))
                     
                     chargeAlert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: { (action: UIAlertAction!) in
@@ -240,7 +246,8 @@ class PatientInformationTableViewController: UITableViewController {
             if indexPath.section == 1 {
                 //complete patient test
                 if indexPath.row == 0 {
-                    
+                    self.performSegueWithIdentifier("List", sender: tableView)
+
                 }
                 //diagnose symptoms
                 if indexPath.row == 1 {
@@ -248,6 +255,21 @@ class PatientInformationTableViewController: UITableViewController {
                 }
                 //chaeck patient status
                 if indexPath.row == 2 {
+                    var stat = ""
+                    if patientRecord.active {
+                         stat = "Patient is Active"
+                    }
+                    else
+                    {
+                         stat = "Patient is inactive"
+                    }
+                    let statusAlert = UIAlertController(title: patient.name, message: stat, preferredStyle: UIAlertControllerStyle.Alert)
+                    
+                    statusAlert.addAction(UIAlertAction(title: "Okay", style: .Default, handler: { (action: UIAlertAction!) in
+                    }))
+                    
+                    
+                    presentViewController(statusAlert, animated: true, completion: nil)
                     
                 }
                 //manage patient info
@@ -287,6 +309,23 @@ class PatientInformationTableViewController: UITableViewController {
                 }
                 if indexPath.row == 5 {
                     //check patient statius
+                    var stat = ""
+                    if patientRecord.active {
+                        stat = "Patient is Active"
+                    }
+                    else
+                    {
+                        stat = "Patient is inactive"
+                    }
+                    let statusAlert = UIAlertController(title: patient.name, message: stat, preferredStyle: UIAlertControllerStyle.Alert)
+                    
+                    statusAlert.addAction(UIAlertAction(title: "Okay", style: .Default, handler: { (action: UIAlertAction!) in
+                        
+                    }))
+                    
+                    
+                    presentViewController(statusAlert, animated: true, completion: nil)
+                    
                 }
                 if indexPath.row == 6 {
                     let alert = UIAlertController(title: "Transfer patient", message: "Please enter the name of a doctor to transfer the patient to.", preferredStyle: .Alert)
@@ -367,6 +406,7 @@ class PatientInformationTableViewController: UITableViewController {
             if flag == UserTypes.TechnicalUser.rawValue
             {
                 detailVC.title = technicalActionData[indexPath.row]
+                detailVC.title = "Complete Tests"
             }
                 //else operational user
             else
@@ -375,6 +415,8 @@ class PatientInformationTableViewController: UITableViewController {
                 
             }
             detailVC.navigationItem.backBarButtonItem?.title = "Back"
+            detailVC.patientRecord = self.patientRecord
+            detailVC.patient = self.patient
         }
     }
     
