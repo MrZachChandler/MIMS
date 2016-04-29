@@ -190,14 +190,13 @@ class ParseClient {
      - parameter ssn:           The patient's SSN
      - parameter completion:    A completion called upon successful or unsuccessful adding of the patient. If unsuccessful, the error message will not be empty and success will be false. Otherwise success will be true with an empty error message.
      */
-    class func admitPatient(withPatientInfo address: Address, insuranceInfo: InsuranceInfo, financeInfo: FinancialInformation, name: String, maritalStatus: Bool, gender: Bool, birthday: NSDate, ssn: String, phone: String, completion: (success: Bool, errorMessage: String) ->()) {
+    class func admitPatient(withPatientInfo address: Address, insuranceInfo: InsuranceInfo, financeInfo: FinancialInformation, name: String, maritalStatus: Bool, gender: Bool, birthday: NSDate, ssn: String, phone: String, vitalInformation: Measurement, completion: (success: Bool, errorMessage: String, patientRecord: PatientRecord?) ->()) {
         checkForPatientDuplicity(checkWithSSN: ssn) { (patientExists) in
             if !patientExists {
                 do {
                     let newPatient = try Patient(initWithInfo: name, married: maritalStatus, gender: gender, birthday: birthday, ssn: ssn, address: address, insuranceInfo: insuranceInfo, financeData: financeInfo, phoneNumber: phone)
                     let patientRecord = PatientRecord()
-                    let vitals = try! Measurement(initWithVitalData: 5, inches: 11, weight: 170, systolic: 120, diastolic: 80)
-                    patientRecord.measurements = vitals
+                    patientRecord.measurements = vitalInformation
                     patientRecord.patient = newPatient
                     patientRecord.canBeDischarged = false
                     patientRecord.active = true
@@ -206,32 +205,32 @@ class ParseClient {
                             patientRecord.attendingPhysician = newDoctor!
                             patientRecord.saveInBackgroundWithBlock({ (success, error) in
                                 if success && error == nil {
-                                    completion(success: true, errorMessage: "")
+                                    completion(success: true, errorMessage: "", patientRecord: patientRecord)
                                 } else {
-                                    completion(success: false, errorMessage: error!.localizedDescription)
+                                    completion(success: false, errorMessage: error!.localizedDescription, patientRecord: nil)
                                 }
                             })
                         } else {
                             patientRecord.deleteEventually()
                             newPatient.deleteEventually()
-                            completion(success: false, errorMessage: "Unable to assign a new doctor!")
+                            completion(success: false, errorMessage: "Unable to assign a new doctor!", patientRecord: nil)
                         }
                     })
                     
                 } catch PatientError.InvalidSSN {
-                    completion(success: false, errorMessage: "You entered an invalid SSN. It must be exactly 9 characters.")
+                    completion(success: false, errorMessage: "You entered an invalid SSN. It must be exactly 9 characters.", patientRecord: nil)
                 } catch PatientError.InvalidName {
-                    completion(success: false, errorMessage: "You entered an invalid name. It cannot be empty.")
+                    completion(success: false, errorMessage: "You entered an invalid name. It cannot be empty.", patientRecord: nil)
                 } catch PatientError.InvalidBrthday {
-                    completion(success: false, errorMessage: "You entered an invalid birthday. The birthday must not be in the future.")
+                    completion(success: false, errorMessage: "You entered an invalid birthday. The birthday must not be in the future.", patientRecord: nil)
                 } catch PatientError.InvalidPhoneNumber{
-                    completion(success: false, errorMessage: "You entered an invalid phone number. The number must be 11 characters.")
+                    completion(success: false, errorMessage: "You entered an invalid phone number. The number must be 11 characters.", patientRecord: nil)
                 }
                 catch _ {
-                    completion(success: false, errorMessage: "An unknown error occured. Please try again.")
+                    completion(success: false, errorMessage: "An unknown error occured. Please try again.", patientRecord: nil)
                 }
             } else {
-                completion(success: false, errorMessage: "A patient with this information already exists")
+                completion(success: false, errorMessage: "A patient with this information already exists", patientRecord: nil)
             }
         }
 

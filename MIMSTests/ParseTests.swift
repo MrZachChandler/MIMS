@@ -38,11 +38,13 @@ class ParseTests: XCTestCase {
     let patientInsurance = try! InsuranceInfo(initWith: NSDate(), memID: "128374838", grpID: "13849301", amount: 25)
     let address = try! Address(initWithAddressData: "123 Test Street", city: "Auburn", state: "AL", zip: "36832")
     let finances = try! FinancialInformation(initWithAllInfo: "Some finance information", balance: 50)
+    let vitals = try! Measurement(initWithVitalData: 5, inches: 11, weight: 170, systolic: 120, diastolic: 80)
+
     
     func testAddPatient() {
         var expectation = XCTestExpectation()
         expectation = expectationWithDescription("Testing add patient")
-        ParseClient.admitPatient(withPatientInfo: address, insuranceInfo: patientInsurance, financeInfo: finances, name: "No Name", maritalStatus: false, gender: false, birthday: NSDate(), ssn: "283728373", phone: "7701117897") { (success, errorMessage) in
+        ParseClient.admitPatient(withPatientInfo: address, insuranceInfo: patientInsurance, financeInfo: finances, name: "No Name", maritalStatus: false, gender: false, birthday: NSDate(), ssn: "373829192", phone: "7701117897", vitalInformation: self.vitals) { (success, errorMessage, patientRecord) in
             if success || errorMessage == "" {
                 expectation.fulfill()
             } else {
