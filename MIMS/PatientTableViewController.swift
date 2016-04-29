@@ -99,11 +99,6 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
 
     }
     
-    func queryTable() {
-        self.queryPatientRecords()
-    }
-    
-
     func queryPatientRecords() {
         ParseClient.queryPatientRecords("doctor", value: MIMSUser.currentUser()!) { (patientRecords, error) in
             if error == nil && patientRecords != nil
@@ -119,6 +114,13 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
             }
         }
     }
+    
+    func queryTable() {
+        self.queryPatientRecords()
+    }
+    
+
+
 
 
     
