@@ -9,6 +9,9 @@
 import UIKit
 
 class PatientInformationTableViewController: UITableViewController {
+    
+    var patient: Patient!
+    var patientRecord: PatientRecord!
 
     let tableData = ["Name", "Address", "Phone", "Martial Status", "Allergies", "Medication", "Required Test", "Perscribed Medication"]
     
