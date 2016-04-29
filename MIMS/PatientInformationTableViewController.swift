@@ -9,6 +9,9 @@
 import UIKit
 
 class PatientInformationTableViewController: UITableViewController {
+    
+    var patient: Patient!
+    var patientRecord: PatientRecord!
 
     let tableData = ["Name", "Address", "Phone", "Martial Status", "Allergies", "Medication", "Required Test", "Perscribed Medication"]
     
@@ -27,10 +30,7 @@ class PatientInformationTableViewController: UITableViewController {
     
     var selectionFlag = 0
     //0 = symptoms, 1 = test, 2 = treatment, 3 = medication
-    
-    var patient: Patient!
-    var patientRecord: PatientRecord!
-    
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
