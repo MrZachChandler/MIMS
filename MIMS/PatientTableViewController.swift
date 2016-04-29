@@ -114,7 +114,7 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
     
     func queryUpdate() {
         for record in records {
-            if record.dirty {
+            if record.attendingPhysician != MIMSUser.currentUser() {
                 self.queryPatientRecords()
             }
         }
