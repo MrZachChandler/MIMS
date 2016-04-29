@@ -283,10 +283,71 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="Bh5-S7-GXi"/>
+                    <connections>
+                        <segue destination="BO1-yS-12R" kind="show" identifier="AdmitPatient" id="A09-QV-LAQ"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gL6-pa-5wE" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1474" y="1847"/>
+            <point key="canvasLocation" x="1474" y="1843"/>
+        </scene>
+        <!--Admit Patient Table View Controller-->
+        <scene sceneID="Sxl-Nc-Qd6">
+            <objects>
+                <tableViewController id="BO1-yS-12R" customClass="AdmitPatientTableViewController" customModule="MIMS" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="F71-CJ-2Go">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="DataEntry" id="Q1a-Ls-Fof" customClass="AddTableViewCell" customModule="MIMS" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="92" width="600" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Q1a-Ls-Fof" id="Dmb-1R-rW3">
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter Text" textAlignment="right" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="vmS-NV-Gf6">
+                                            <rect key="frame" x="217" y="7" width="375" height="30"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <textInputTraits key="textInputTraits"/>
+                                            <connections>
+                                                <action selector="changedData:" destination="Q1a-Ls-Fof" eventType="editingDidEnd" id="gts-9m-Iky"/>
+                                            </connections>
+                                        </textField>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ula-in-gZ9">
+                                            <rect key="frame" x="8" y="11" width="201" height="21"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="201" id="rCs-Qk-wWG"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="ula-in-gZ9" firstAttribute="centerY" secondItem="vmS-NV-Gf6" secondAttribute="centerY" id="UVd-qF-1Yb"/>
+                                        <constraint firstItem="ula-in-gZ9" firstAttribute="centerY" secondItem="Dmb-1R-rW3" secondAttribute="centerY" id="XfK-zI-W3Z"/>
+                                        <constraint firstItem="ula-in-gZ9" firstAttribute="leading" secondItem="Dmb-1R-rW3" secondAttribute="leadingMargin" id="Yi3-Ld-oxm"/>
+                                        <constraint firstItem="vmS-NV-Gf6" firstAttribute="trailing" secondItem="Dmb-1R-rW3" secondAttribute="trailingMargin" id="ac1-6w-Bje"/>
+                                        <constraint firstItem="vmS-NV-Gf6" firstAttribute="leading" secondItem="ula-in-gZ9" secondAttribute="trailing" constant="8" symbolic="YES" id="ltE-Ku-qZd"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="DataNamw" destination="ula-in-gZ9" id="sKe-m5-Bv0"/>
+                                    <outlet property="textFielf" destination="vmS-NV-Gf6" id="JRQ-yb-hFj"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="BO1-yS-12R" id="EE3-9M-tcB"/>
+                            <outlet property="delegate" destination="BO1-yS-12R" id="2j4-YF-tGV"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="3VL-Qd-c6d" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2137" y="1847"/>
         </scene>
         <!--Root View Controller-->
         <scene sceneID="cFU-NF-dY4">

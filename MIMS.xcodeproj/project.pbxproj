@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		171D70161CC5309A00402A04 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 171D70151CC5309A00402A04 /* LoginViewController.swift */; };
 		17A2638F1CC140F40092B027 /* ParseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17A2638E1CC140F40092B027 /* ParseManager.swift */; };
+		2F051A1C1CD3B7C400506ABE /* AdmitPatientTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F051A1B1CD3B7C300506ABE /* AdmitPatientTableViewController.swift */; };
+		2F051A1E1CD3CA7B00506ABE /* AddTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F051A1D1CD3CA7B00506ABE /* AddTableViewCell.swift */; };
 		2F7D06081CCA9DF20081F59D /* MIMSCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2F7D06071CCA9DF20081F59D /* MIMSCell.xib */; };
 		2F7D060B1CCA9FA60081F59D /* MIMSTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7D060A1CCA9FA60081F59D /* MIMSTableViewCell.swift */; };
 		2FB8F58B1CCD6AE9002C0E12 /* PatientInformationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FB8F58A1CCD6AE9002C0E12 /* PatientInformationTableViewController.swift */; };
@@ -59,6 +61,8 @@
 		14CE67DC1A201621FFADB68E /* Pods_MIMS_MIMSTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MIMS_MIMSTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		171D70151CC5309A00402A04 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		17A2638E1CC140F40092B027 /* ParseManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParseManager.swift; sourceTree = "<group>"; };
+		2F051A1B1CD3B7C300506ABE /* AdmitPatientTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdmitPatientTableViewController.swift; sourceTree = "<group>"; };
+		2F051A1D1CD3CA7B00506ABE /* AddTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddTableViewCell.swift; sourceTree = "<group>"; };
 		2F7D06071CCA9DF20081F59D /* MIMSCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MIMSCell.xib; sourceTree = "<group>"; };
 		2F7D060A1CCA9FA60081F59D /* MIMSTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MIMSTableViewCell.swift; sourceTree = "<group>"; };
 		2FB8F58A1CCD6AE9002C0E12 /* PatientInformationTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatientInformationTableViewController.swift; sourceTree = "<group>"; };
@@ -152,6 +156,7 @@
 			isa = PBXGroup;
 			children = (
 				2F7D06071CCA9DF20081F59D /* MIMSCell.xib */,
+				2F051A1D1CD3CA7B00506ABE /* AddTableViewCell.swift */,
 				2F7D060A1CCA9FA60081F59D /* MIMSTableViewCell.swift */,
 			);
 			name = Cells;
@@ -220,6 +225,7 @@
 			isa = PBXGroup;
 			children = (
 				2FB8F58A1CCD6AE9002C0E12 /* PatientInformationTableViewController.swift */,
+				2F051A1B1CD3B7C300506ABE /* AdmitPatientTableViewController.swift */,
 				8F27425D1CC9B9B000D7B4B6 /* PatientTableViewController.swift */,
 				2FD137AB1CCE8C6A00FEDC1A /* SelectionListTableViewController.swift */,
 			);
@@ -516,6 +522,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2FD137AC1CCE8C6A00FEDC1A /* SelectionListTableViewController.swift in Sources */,
+				2F051A1E1CD3CA7B00506ABE /* AddTableViewCell.swift in Sources */,
 				8F2742761CCE7AFF00D7B4B6 /* Measurements, Tests, and Scans.swift in Sources */,
 				2FB8F58B1CCD6AE9002C0E12 /* PatientInformationTableViewController.swift in Sources */,
 				8F6AFF881CC6A69D00A8A1F0 /* DashboardTableViewController.swift in Sources */,
@@ -525,6 +532,7 @@
 				8F2742721CCE7A3A00D7B4B6 /* Finance&Insurance.swift in Sources */,
 				8F886CF61CD0895500E80F7F /* HourPickerViewController.swift in Sources */,
 				2F7D060B1CCA9FA60081F59D /* MIMSTableViewCell.swift in Sources */,
+				2F051A1C1CD3B7C400506ABE /* AdmitPatientTableViewController.swift in Sources */,
 				8F0CD4221CB737F500615490 /* AppDelegate.swift in Sources */,
 				8F27427A1CCE7B6E00D7B4B6 /* Users.swift in Sources */,
 				8FF2F8EF1CC5270000E207B3 /* SWRevealViewController.m in Sources */,

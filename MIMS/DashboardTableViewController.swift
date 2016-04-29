@@ -259,7 +259,16 @@ class DashboardTableViewController: UITableViewController, SWRevealViewControlle
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         return 90
     }
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        if flag == UserTypes.AdminUser.rawValue {
+            if indexPath.row == 0 {
+                self.performSegueWithIdentifier("AdmitPatient", sender: tableView)
+            }
 
+        }
+        print("Indexpath.row")
+        print(indexPath.row)
+    }
 
     /*
     // Override to support conditional editing of the table view.
@@ -296,14 +305,16 @@ class DashboardTableViewController: UITableViewController, SWRevealViewControlle
     }
     */
 
-    /*
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        if segue.identifier == "AdmitPatient" {
+            let detailVC:AdmitPatientTableViewController = segue.destinationViewController as! AdmitPatientTableViewController
+            detailVC.title = "Admit New Patient"
+            detailVC.navigationItem.backBarButtonItem?.title = "Cancel"
+        }
     }
-    */
-
+    
 }
