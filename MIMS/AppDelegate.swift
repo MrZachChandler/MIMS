@@ -9,6 +9,9 @@
 import UIKit
 import Parse
 import IQKeyboardManager
+import Fabric
+import Crashlytics
+
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -56,7 +59,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.window?.rootViewController = loginVC
         }
 
-        
+        Fabric.with([Crashlytics.self])
         IQKeyboardManager.sharedManager().enable = true
         return true
     }

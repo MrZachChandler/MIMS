@@ -9,7 +9,8 @@ pod ‘SmileTouchID’
 pod ‘IQKeyboardManager’
 pod ‘DZNEmptyDataSet’
 pod 'THCalendarDatePicker'
-
+pod 'Fabric'
+pod 'Crashlytics'
 post_install do |installer|
   installer.pods_project.build_configuration_list.build_configurations.each do |configuration|
 
