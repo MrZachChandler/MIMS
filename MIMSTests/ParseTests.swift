@@ -42,7 +42,7 @@ class ParseTests: XCTestCase {
     func testAddPatient() {
         var expectation = XCTestExpectation()
         expectation = expectationWithDescription("Testing add patient")
-        ParseClient.admitPatient(withPatientInfo: address, insuranceInfo: patientInsurance, financeInfo: finances, name: "Michael John", maritalStatus: true, gender: true, birthday: NSDate(), ssn: "111227283", phone: "7701117897") { (success, errorMessage) in
+        ParseClient.admitPatient(withPatientInfo: address, insuranceInfo: patientInsurance, financeInfo: finances, name: "No Name", maritalStatus: false, gender: false, birthday: NSDate(), ssn: "283728373", phone: "7701117897") { (success, errorMessage) in
             if success || errorMessage == "" {
                 expectation.fulfill()
             } else {

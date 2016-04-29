@@ -84,7 +84,7 @@ class ParseClient {
     
     class func queryPatientRecords(key: String, value: AnyObject, completion: (patientRecords: [PatientRecord]?, error: NSError?) ->()) {
         let query = PFQuery(className: "PatientRecord")
-        //query.whereKey(key, equalTo: value as! MIMSUser)
+        query.whereKey(key, equalTo: value as! MIMSUser)
         query.includeKey("patient")
         query.includeKey("appointments")
         query.includeKey("treatments")
@@ -191,42 +191,50 @@ class ParseClient {
      - parameter completion:    A completion called upon successful or unsuccessful adding of the patient. If unsuccessful, the error message will not be empty and success will be false. Otherwise success will be true with an empty error message.
      */
     class func admitPatient(withPatientInfo address: Address, insuranceInfo: InsuranceInfo, financeInfo: FinancialInformation, name: String, maritalStatus: Bool, gender: Bool, birthday: NSDate, ssn: String, phone: String, completion: (success: Bool, errorMessage: String) ->()) {
-        
-        do {
-            let newPatient = try Patient(initWithInfo: name, married: maritalStatus, gender: gender, birthday: birthday, ssn: ssn, address: address, insuranceInfo: insuranceInfo, financeData: financeInfo, phoneNumber: phone)
-            let patientRecord = PatientRecord()
-            patientRecord.patient = newPatient
-            patientRecord.canBeDischarged = false
-            patientRecord.active = true
-            findDoctorToAssign({ (newDoctor, error) in
-                if newDoctor != nil && error == nil {
-                    patientRecord.attendingPhysician = newDoctor!
-                    patientRecord.saveInBackgroundWithBlock({ (success, error) in
-                        if success && error == nil {
-                            completion(success: true, errorMessage: "")
+        checkForPatientDuplicity(checkWithSSN: ssn) { (patientExists) in
+            if !patientExists {
+                do {
+                    let newPatient = try Patient(initWithInfo: name, married: maritalStatus, gender: gender, birthday: birthday, ssn: ssn, address: address, insuranceInfo: insuranceInfo, financeData: financeInfo, phoneNumber: phone)
+                    let patientRecord = PatientRecord()
+                    let vitals = try! Measurement(initWithVitalData: 5, inches: 11, weight: 170, systolic: 120, diastolic: 80)
+                    patientRecord.measurements = vitals
+                    patientRecord.patient = newPatient
+                    patientRecord.canBeDischarged = false
+                    patientRecord.active = true
+                    findDoctorToAssign({ (newDoctor, error) in
+                        if newDoctor != nil && error == nil {
+                            patientRecord.attendingPhysician = newDoctor!
+                            patientRecord.saveInBackgroundWithBlock({ (success, error) in
+                                if success && error == nil {
+                                    completion(success: true, errorMessage: "")
+                                } else {
+                                    completion(success: false, errorMessage: error!.localizedDescription)
+                                }
+                            })
                         } else {
-                            completion(success: false, errorMessage: error!.localizedDescription)
+                            patientRecord.deleteEventually()
+                            newPatient.deleteEventually()
+                            completion(success: false, errorMessage: "Unable to assign a new doctor!")
                         }
                     })
-                } else {
-                    patientRecord.deleteEventually()
-                    newPatient.deleteEventually()
-                    completion(success: false, errorMessage: "Unable to assign a new doctor!")
+                    
+                } catch PatientError.InvalidSSN {
+                    completion(success: false, errorMessage: "You entered an invalid SSN. It must be exactly 9 characters.")
+                } catch PatientError.InvalidName {
+                    completion(success: false, errorMessage: "You entered an invalid name. It cannot be empty.")
+                } catch PatientError.InvalidBrthday {
+                    completion(success: false, errorMessage: "You entered an invalid birthday. The birthday must not be in the future.")
+                } catch PatientError.InvalidPhoneNumber{
+                    completion(success: false, errorMessage: "You entered an invalid phone number. The number must be 11 characters.")
                 }
-            })
-            
-        } catch PatientError.InvalidSSN {
-            completion(success: false, errorMessage: "You entered an invalid SSN. It must be exactly 9 characters.")
-        } catch PatientError.InvalidName {
-            completion(success: false, errorMessage: "You entered an invalid name. It cannot be empty.")
-        } catch PatientError.InvalidBrthday {
-            completion(success: false, errorMessage: "You entered an invalid birthday. The birthday must not be in the future.")
-        } catch PatientError.InvalidPhoneNumber{
-            completion(success: false, errorMessage: "You entered an invalid phone number. The number must be 11 characters.")
+                catch _ {
+                    completion(success: false, errorMessage: "An unknown error occured. Please try again.")
+                }
+            } else {
+                completion(success: false, errorMessage: "A patient with this information already exists")
+            }
         }
-        catch _ {
-            completion(success: false, errorMessage: "An unknown error occured. Please try again.")
-        }
+
     }
     
     private class func checkForPatientDuplicity(checkWithSSN ssn: String, completion: (patientExists: Bool) ->()){
