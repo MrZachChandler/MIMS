@@ -199,7 +199,8 @@ class PatientInformationTableViewController: UITableViewController {
                     
                     deleteAlert.addAction(UIAlertAction(title: "Continue", style: .Default, handler: { (action: UIAlertAction!) in
                         ParseClient.deletePatient(withPatientRecord: self.patientRecord, completion: { (success, error) in
-                            
+                            let vc = DashboardTableViewController()
+                            self.presentViewController(vc, animated: true, completion: nil)
                         })
                         
                     }))
@@ -239,7 +240,8 @@ class PatientInformationTableViewController: UITableViewController {
             if indexPath.section == 1 {
                 //complete patient test
                 if indexPath.row == 0 {
-                    
+                    self.performSegueWithIdentifier("List", sender: tableView)
+
                 }
                 //diagnose symptoms
                 if indexPath.row == 1 {
@@ -247,6 +249,21 @@ class PatientInformationTableViewController: UITableViewController {
                 }
                 //chaeck patient status
                 if indexPath.row == 2 {
+                    var stat = ""
+                    if patientRecord.active {
+                         stat = "Patient is Active"
+                    }
+                    else
+                    {
+                         stat = "Patient is inactive"
+                    }
+                    let statusAlert = UIAlertController(title: patient.name, message: stat, preferredStyle: UIAlertControllerStyle.Alert)
+                    
+                    statusAlert.addAction(UIAlertAction(title: "Okay", style: .Default, handler: { (action: UIAlertAction!) in
+                    }))
+                    
+                    
+                    presentViewController(statusAlert, animated: true, completion: nil)
                     
                 }
                 //manage patient info
@@ -286,6 +303,23 @@ class PatientInformationTableViewController: UITableViewController {
                 }
                 if indexPath.row == 5 {
                     //check patient statius
+                    var stat = ""
+                    if patientRecord.active {
+                        stat = "Patient is Active"
+                    }
+                    else
+                    {
+                        stat = "Patient is inactive"
+                    }
+                    let statusAlert = UIAlertController(title: patient.name, message: stat, preferredStyle: UIAlertControllerStyle.Alert)
+                    
+                    statusAlert.addAction(UIAlertAction(title: "Okay", style: .Default, handler: { (action: UIAlertAction!) in
+                        
+                    }))
+                    
+                    
+                    presentViewController(statusAlert, animated: true, completion: nil)
+                    
                 }
                 if indexPath.row == 6 {
                     let alert = UIAlertController(title: "Transfer patient", message: "Please enter the name of a doctor to transfer the patient to.", preferredStyle: .Alert)
@@ -366,6 +400,7 @@ class PatientInformationTableViewController: UITableViewController {
             if flag == UserTypes.TechnicalUser.rawValue
             {
                 detailVC.title = technicalActionData[indexPath.row]
+                detailVC.title = "Complete Tests"
             }
                 //else operational user
             else
