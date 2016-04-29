@@ -280,6 +280,7 @@ class ParseClient {
                 let financeData = (updatedPatient as! Patient).financials
                 financeData.clearBalance()
                 record.canBeDischarged = true
+                record.saveInBackground()
                 completion(success: true)
             } else {
                 completion(success: false)
@@ -342,6 +343,7 @@ class ParseClient {
         for testDescription in newlyRequestedTests {
             record.addTest(newTest: Test(initWithTestDescription: testDescription))
         }
+        record.saveEventually()
     }
     
     /**
@@ -534,6 +536,7 @@ class ParseClient {
         }
         do {
             try record.conditions?.addCauseOfDeath(cod)
+            record.saveEventually()
         } catch ConditionError.InvalidCOD {
             error = NSError(domain: "Condition error", code: 002, userInfo: ["description": "Invalid cause of death"])
             return error
@@ -556,7 +559,11 @@ class ParseClient {
             try queryUsers("name", value: name, completion: { (users, error) in
                 if users != nil && error == nil && users!.count > 0 {
                     record.attendingPhysician = users!.first!
-                    completion(success: true, error: nil)
+                    record.saveInBackgroundWithBlock( {(success: Bool, error: NSError?) in
+                        if success && error == nil {
+                            completion(success: true, error: nil)
+                        }
+                    })
                 } else {
                     completion(success: false, error: error)
                 }

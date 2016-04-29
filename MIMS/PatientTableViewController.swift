@@ -14,15 +14,8 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
     var menuButton: UIButton!
     
     var patients: [Int: Patient]?
-    var records: [PatientRecord]?
+    var records = [PatientRecord]()
     
-    
-    let name = ["Abe Lincon","Billy Manchester","Clyde S. Dale","Doug Chandler","Elvira Moody", "Fransis Ogertree", "Hilary Clinton", "Jacob Jenkins", "Kelly Price", "Low Mill", "Micheal Scott", "No Name", "Oliver Queen"]
-    
-    let detail0 = ["1(555)234-5678","1(555)234-5678","1(555)234-5678","1(555)234-5678","1(555)234-5678","1(555)234-5678","1(555)234-5678","1(555)234-5678","1(555)234-5678","1(555)234-5678","1(555)234-5678","1(555)234-5678","1(555)234-5678","1(555)234-5678"]
-    let detail1 = ["542 Oak Meadow Ln, Auburn Al. 36830","542 Oak Meadow Ln, Auburn Al. 36830","542 Oak Meadow Ln, Auburn Al. 36830","542 Oak Meadow Ln, Auburn Al. 36830","542 Oak Meadow Ln, Auburn Al. 36830","542 Oak Meadow Ln, Auburn Al. 36830","542 Oak Meadow Ln, Auburn Al. 36830","542 Oak Meadow Ln, Auburn Al. 36830","542 Oak Meadow Ln, Auburn Al. 36830","542 Oak Meadow Ln, Auburn Al. 36830","542 Oak Meadow Ln, Auburn Al. 36830","542 Oak Meadow Ln, Auburn Al. 36830","542 Oak Meadow Ln, Auburn Al. 36830","542 Oak Meadow Ln, Auburn Al. 36830"]
-    let detail2 = ["March 25, 1983","March 25, 1983","March 25, 1983","March 25, 1983","March 25, 1983","March 25, 1983","March 25, 1983","March 25, 1983","March 25, 1983","March 25, 1983","March 25, 1983","March 25, 1983","March 25, 1983","March 25, 1983"]
-    let detail3 = ["Male","Male","Male","Male","Female","Female","Female","Male","Female","Male","Male","Male","Male","Male"]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,6 +46,11 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
         // Do any additional setup after loading the view.
     }
     
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        self.queryUpdate()
+    }
+    
     override func preferredStatusBarStyle() -> UIStatusBarStyle {
         return .Default
     }
@@ -69,15 +67,15 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        guard records?.count > 0 else { return 0}
-        return records!.count
+        guard records.count > 0 else { return 0}
+        return records.count
     }
     
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("MIMS", forIndexPath: indexPath) as! MIMSTableViewCell
         
-        let tempRecord = records![indexPath.row]
+        let tempRecord = records[indexPath.row]
         if let patient = patients![indexPath.row] {
             if !patient.dirty {
             cell.bindPatientWithoutData(patient)
@@ -103,7 +101,7 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
         ParseClient.queryPatientRecords("doctor", value: MIMSUser.currentUser()!) { (patientRecords, error) in
             if error == nil && patientRecords != nil
             {
-                self.records = patientRecords
+                self.records = patientRecords!
                 self.patients = [Int: Patient]()
                 self.tableView.reloadData()
             }
@@ -112,6 +110,14 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
     
     func queryTable() {
         self.queryPatientRecords()
+    }
+    
+    func queryUpdate() {
+        for record in records {
+            if record.dirty {
+                self.queryPatientRecords()
+            }
+        }
     }
     
 
@@ -128,7 +134,7 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
             let detailVC:PatientInformationTableViewController = segue.destinationViewController as! PatientInformationTableViewController
             detailVC.title = patients![indexPath.row]?.name
             detailVC.patient = patients![indexPath.row]
-            detailVC.patientRecord = records![indexPath.row]
+            detailVC.patientRecord = records[indexPath.row]
             
         }
     }

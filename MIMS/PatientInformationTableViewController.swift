@@ -125,6 +125,7 @@ class PatientInformationTableViewController: UITableViewController {
             }
         } else if indexPath.section == 1 {
             cell.textLabel?.text = vitalsData[indexPath.row]
+            cell.userInteractionEnabled = false
             switch indexPath.row {
             case 0:
                 cell.detailTextLabel?.text = patientRecord.measurements?.height
@@ -150,6 +151,7 @@ class PatientInformationTableViewController: UITableViewController {
         {
             cell.detailTextLabel?.text = ""
             cell.accessoryType = .DisclosureIndicator
+            cell.userInteractionEnabled = true
             switch flag  {
             case UserTypes.AdminUser.rawValue:
                 cell.textLabel?.text = adminData[indexPath.row]
@@ -338,6 +340,8 @@ class PatientInformationTableViewController: UITableViewController {
                                 }
                                 let alert = getDefaultAlert("Couldn't transfer patient", message: errorMessage, actions: nil, useDefaultAction: true)
                                 self.presentViewController(alert, animated: true, completion: nil)
+                            } else {
+                                self.navigationController?.popViewControllerAnimated(true)
                             }
                         })
                     }))
