@@ -271,7 +271,7 @@ class Patient: PFObject, PFSubclassing {
         guard name.characters.count > 0 else {
             throw PatientError.InvalidName
         }
-        guard phoneNumber.characters.count == 11 else {
+        guard phoneNumber.characters.count == 10 else {
             throw PatientError.InvalidPhoneNumber
         }
         

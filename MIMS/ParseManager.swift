@@ -209,6 +209,8 @@ class ParseClient {
                         }
                     })
                 } else {
+                    patientRecord.deleteEventually()
+                    newPatient.deleteEventually()
                     completion(success: false, errorMessage: "Unable to assign a new doctor!")
                 }
             })
@@ -580,12 +582,13 @@ class ParseClient {
      */
     private class func findDoctorToAssign(completion: (newDoctor: MIMSUser?, error: NSError?) ->()) {
         let count = PFUser.query()!
+        count.whereKey("userType", equalTo: UserTypes.OperationalUser.rawValue)
         count.countObjectsInBackgroundWithBlock { (countedUsers, error) in
             if error == nil {
                 let query = PFUser.query()!
                 query.whereKey("userType", equalTo: UserTypes.OperationalUser.rawValue)
-                query.limit = 1
-                query.skip = Int(arc4random_uniform(UInt32(countedUsers))+0)
+                let skip = Int(arc4random_uniform(UInt32(countedUsers))+0)
+                //query.skip = Int(arc4random_uniform(UInt32(countedUsers))+0)
                 query.getFirstObjectInBackgroundWithBlock({ (newDoctor, error) in
                     if error == nil && newDoctor != nil {
                         completion(newDoctor: newDoctor as? MIMSUser, error: nil)

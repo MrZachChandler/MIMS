@@ -34,39 +34,30 @@ class ParseTests: XCTestCase {
             // Put the code you want to measure the time of here.
         }
     }
+    
+    let patientInsurance = try! InsuranceInfo(initWith: NSDate(), memID: "128374838", grpID: "13849301", amount: 25)
+    let address = try! Address(initWithAddressData: "123 Test Street", city: "Auburn", state: "AL", zip: "36832")
+    let finances = try! FinancialInformation(initWithAllInfo: "Some finance information", balance: 50)
+    
+    func testAddPatient() {
+        var expectation = XCTestExpectation()
+        expectation = expectationWithDescription("Testing add patient")
+        ParseClient.admitPatient(withPatientInfo: address, insuranceInfo: patientInsurance, financeInfo: finances, name: "Michael John", maritalStatus: true, gender: true, birthday: NSDate(), ssn: "111227283", phone: "7701117897") { (success, errorMessage) in
+            if success || errorMessage == "" {
+                expectation.fulfill()
+            } else {
+                XCTAssert(false)
+            }
+        }
+        waitForExpectationsWithTimeout(20) { (error) in
+//            XCTAssert(error)
+        }
+    }
 
 }
 
-class ParseTreatmentTests: XCTestCase {
-    var user: MIMSUser!
-    var patient: Patient!
-    var patientRecord: PatientRecord!
-    
-    override func setUp() {
-        super.setUp()
-        user = MIMSUser.currentUser()!
-//        patient = Patient()
-//        patient.name = "Patrick"
-//        patientRecord = PatientRecord()
-//        patientRecord.patient = patient
-    }
-    
-    override func tearDown() {
-        super.tearDown()
-    }
-    
-    func testTreatmentPharmacist() {
-        let treatment = Prescription()
-        treatment.pharmacist = user
-//        self.patientRecord.treatments?.append(treatment)
-//        try! patientRecord.save()
-        try! treatment.save()
-        XCTAssert(treatment.pharmacist == user)
-        
-    }
-    
 
-    
-    
-    
-}
+
+
+
+

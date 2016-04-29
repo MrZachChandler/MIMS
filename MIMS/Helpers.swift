@@ -68,6 +68,15 @@ class Address: PFObject, PFSubclassing {
         return "\(street!) \(city!), \(state!), \(zipCode!)"
     }
     
+    convenience init(initWithAddressData street: String, city: String, state: String, zip: String) throws {
+        do {
+            self.init()
+            try self.newAddress(street, city: city, state: state, zip: zip)
+        } catch AddressError.InvalidAddress {
+            throw AddressError.InvalidAddress
+        }
+    }
+    
     /**
      Add a complete new address for the patient
      
