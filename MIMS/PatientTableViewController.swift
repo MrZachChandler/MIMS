@@ -104,12 +104,7 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
             if error == nil && patientRecords != nil
             {
                 self.records = patientRecords
-                for record in self.records!
-                {
-                    //self.patients?.append(record.patient!)
-                    
-                }
-                print(self.records?.count)
+                self.patients = [Int: Patient]()
                 self.tableView.reloadData()
             }
         }
@@ -131,7 +126,8 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
         if segue.identifier == "Information" {
             let indexPath:NSIndexPath = self.tableView.indexPathForSelectedRow!
             let detailVC:PatientInformationTableViewController = segue.destinationViewController as! PatientInformationTableViewController
-            detailVC.title = name[indexPath.row]
+            detailVC.title = patients![indexPath.row]?.name
+            detailVC.patient = patients![indexPath.row]
             detailVC.patientRecord = records![indexPath.row]
             
         }

@@ -90,9 +90,9 @@ class Measurement: PFObject, PFSubclassing {
         }
     }
     
-    private var inches: Int? {
+    private var inches: Double? {
         get {
-            return self["heightInches"] as? Int
+            return self["heightInches"] as? Double
         }
         set {
             if newValue > 0 && newValue < 12 {
@@ -113,6 +113,19 @@ class Measurement: PFObject, PFSubclassing {
             if newValue > 0 {
                 self["weight"] = newValue!
             }
+        }
+    }
+    
+    convenience init(initWithVitalData feet: Int, inches: Double, weight: Double, systolic: Int, diastolic: Int) throws{
+        do {
+            self.init()
+            try self.addNewBloodPressure(systolic, diastolic: diastolic)
+            try self.addHeight(feet, inches: inches)
+            self.weight = weight
+        } catch MeasurementError.InvalidBloodPressure {
+            throw MeasurementError.InvalidBloodPressure
+        } catch MeasurementError.InvalidHeight {
+            throw MeasurementError.InvalidHeight
         }
     }
     
@@ -138,7 +151,7 @@ class Measurement: PFObject, PFSubclassing {
      - parameter feet:   The patient's height in feet
      - parameter inches: The patient's height in inches
      */
-    func addHeight(feet: Int, inches: Int) throws {
+    func addHeight(feet: Int, inches: Double) throws {
         guard feet > 0 && feet <= 10 && inches > 0 && inches < 12 else {
             throw MeasurementError.InvalidHeight
         }

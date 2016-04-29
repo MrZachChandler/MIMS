@@ -136,8 +136,6 @@ class PatientRecord: PFObject, PFSubclassing {
         self.testsTaken?.append(test)
     }
     
-    
-    
     class func parseClassName() -> String {
         return "PatientRecord"
     }
@@ -273,7 +271,7 @@ class Patient: PFObject, PFSubclassing {
         guard name.characters.count > 0 else {
             throw PatientError.InvalidName
         }
-        guard phoneNumber.characters.count == 11 else {
+        guard phoneNumber.characters.count == 10 else {
             throw PatientError.InvalidPhoneNumber
         }
         
@@ -286,38 +284,7 @@ class Patient: PFObject, PFSubclassing {
         self.address = address
         self.insurance = insuranceInfo
         self.financials = financeData
-    }
-    
-    /**
-     A convenience init for a new patient. Requires address
-     Use this init for patient's without insurance
-     
-     - parameter name:          The patient's name
-     - parameter married:       The patient's marriage status
-     - parameter gender:        The patient's gender
-     - parameter ssn:           The patient's SSN
-     - parameter address:       The patient's address
-     - parameter insuranceInfo: The patient's insurance info
-     - parameter financeData:   The patient's finance data
-     
-     - returns:
-     */
-    convenience init(initWithLessInfo name: String, married: Bool, gender: Bool, birthday: NSDate, ssn: String, address: Address) throws {
-        guard birthday <= NSDate() else {
-            throw PatientError.InvalidBrthday
-        }
-        guard ssn.characters.count == 9 else {
-            throw PatientError.InvalidSSN
-        }
-        guard name.characters.count > 0 else {
-            throw PatientError.InvalidName
-        }
-        self.init()
-        self.name = name
-        self.married = married
-        self.gender = gender
-        self.ssn = ssn
-        self.address = address
+        self.phoneNumber = phoneNumber
     }
     
     class func parseClassName() -> String {

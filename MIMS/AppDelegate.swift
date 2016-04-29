@@ -35,6 +35,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Appointment.registerSubclass()
         Surgery.registerSubclass()
         Immunization.registerSubclass()
+        Measurement.registerSubclass()
 
         UINavigationBar.appearance().tintColor = UIColor.whiteColor()
         UINavigationBar.appearance().barStyle = UIBarStyle.BlackOpaque

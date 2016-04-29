@@ -84,7 +84,7 @@ class ParseClient {
     
     class func queryPatientRecords(key: String, value: AnyObject, completion: (patientRecords: [PatientRecord]?, error: NSError?) ->()) {
         let query = PFQuery(className: "PatientRecord")
-        //query.whereKey(key, equalTo: value as! MIMSUser)
+        query.whereKey(key, equalTo: value as! MIMSUser)
         query.includeKey("patient")
         query.includeKey("appointments")
         query.includeKey("treatments")
@@ -190,41 +190,50 @@ class ParseClient {
      - parameter ssn:           The patient's SSN
      - parameter completion:    A completion called upon successful or unsuccessful adding of the patient. If unsuccessful, the error message will not be empty and success will be false. Otherwise success will be true with an empty error message.
      */
-    class func admitPatient(withPatientInfo address: Address, insuranceInfo: InsuranceInfo, financeInfo: FinancialInformation, name: String, maritalStatus: Bool, gender: Bool, birthday: NSDate, ssn: String, phone: String, completion: (success: Bool, errorMessage: String) ->()) {
-        
-        do {
-            let newPatient = try Patient(initWithInfo: name, married: maritalStatus, gender: gender, birthday: birthday, ssn: ssn, address: address, insuranceInfo: insuranceInfo, financeData: financeInfo, phoneNumber: phone)
-            let patientRecord = PatientRecord()
-            patientRecord.patient = newPatient
-            patientRecord.canBeDischarged = false
-            patientRecord.active = true
-            findDoctorToAssign({ (newDoctor, error) in
-                if newDoctor != nil && error == nil {
-                    patientRecord.attendingPhysician = newDoctor!
-                    patientRecord.saveInBackgroundWithBlock({ (success, error) in
-                        if success && error == nil {
-                            completion(success: true, errorMessage: "")
+    class func admitPatient(withPatientInfo address: Address, insuranceInfo: InsuranceInfo, financeInfo: FinancialInformation, name: String, maritalStatus: Bool, gender: Bool, birthday: NSDate, ssn: String, phone: String, vitalInformation: Measurement, completion: (success: Bool, errorMessage: String, patientRecord: PatientRecord?) ->()) {
+        checkForPatientDuplicity(checkWithSSN: ssn) { (patientExists) in
+            if !patientExists {
+                do {
+                    let newPatient = try Patient(initWithInfo: name, married: maritalStatus, gender: gender, birthday: birthday, ssn: ssn, address: address, insuranceInfo: insuranceInfo, financeData: financeInfo, phoneNumber: phone)
+                    let patientRecord = PatientRecord()
+                    patientRecord.measurements = vitalInformation
+                    patientRecord.patient = newPatient
+                    patientRecord.canBeDischarged = false
+                    patientRecord.active = true
+                    findDoctorToAssign({ (newDoctor, error) in
+                        if newDoctor != nil && error == nil {
+                            patientRecord.attendingPhysician = newDoctor!
+                            patientRecord.saveInBackgroundWithBlock({ (success, error) in
+                                if success && error == nil {
+                                    completion(success: true, errorMessage: "", patientRecord: patientRecord)
+                                } else {
+                                    completion(success: false, errorMessage: error!.localizedDescription, patientRecord: nil)
+                                }
+                            })
                         } else {
-                            completion(success: false, errorMessage: error!.localizedDescription)
+                            patientRecord.deleteEventually()
+                            newPatient.deleteEventually()
+                            completion(success: false, errorMessage: "Unable to assign a new doctor!", patientRecord: nil)
                         }
                     })
-                } else {
-                    completion(success: false, errorMessage: "Unable to assign a new doctor!")
+                    
+                } catch PatientError.InvalidSSN {
+                    completion(success: false, errorMessage: "You entered an invalid SSN. It must be exactly 9 characters.", patientRecord: nil)
+                } catch PatientError.InvalidName {
+                    completion(success: false, errorMessage: "You entered an invalid name. It cannot be empty.", patientRecord: nil)
+                } catch PatientError.InvalidBrthday {
+                    completion(success: false, errorMessage: "You entered an invalid birthday. The birthday must not be in the future.", patientRecord: nil)
+                } catch PatientError.InvalidPhoneNumber{
+                    completion(success: false, errorMessage: "You entered an invalid phone number. The number must be 11 characters.", patientRecord: nil)
                 }
-            })
-            
-        } catch PatientError.InvalidSSN {
-            completion(success: false, errorMessage: "You entered an invalid SSN. It must be exactly 9 characters.")
-        } catch PatientError.InvalidName {
-            completion(success: false, errorMessage: "You entered an invalid name. It cannot be empty.")
-        } catch PatientError.InvalidBrthday {
-            completion(success: false, errorMessage: "You entered an invalid birthday. The birthday must not be in the future.")
-        } catch PatientError.InvalidPhoneNumber{
-            completion(success: false, errorMessage: "You entered an invalid phone number. The number must be 11 characters.")
+                catch _ {
+                    completion(success: false, errorMessage: "An unknown error occured. Please try again.", patientRecord: nil)
+                }
+            } else {
+                completion(success: false, errorMessage: "A patient with this information already exists", patientRecord: nil)
+            }
         }
-        catch _ {
-            completion(success: false, errorMessage: "An unknown error occured. Please try again.")
-        }
+
     }
     
     private class func checkForPatientDuplicity(checkWithSSN ssn: String, completion: (patientExists: Bool) ->()){
@@ -580,11 +589,12 @@ class ParseClient {
      */
     private class func findDoctorToAssign(completion: (newDoctor: MIMSUser?, error: NSError?) ->()) {
         let count = PFUser.query()!
+        count.whereKey("userType", equalTo: UserTypes.OperationalUser.rawValue)
         count.countObjectsInBackgroundWithBlock { (countedUsers, error) in
             if error == nil {
                 let query = PFUser.query()!
                 query.whereKey("userType", equalTo: UserTypes.OperationalUser.rawValue)
-                query.limit = 1
+                let skip = Int(arc4random_uniform(UInt32(countedUsers))+0)
                 query.skip = Int(arc4random_uniform(UInt32(countedUsers))+0)
                 query.getFirstObjectInBackgroundWithBlock({ (newDoctor, error) in
                     if error == nil && newDoctor != nil {
@@ -608,12 +618,12 @@ class ParseClient {
     private class func findPharmacistToAssign(completion: (newPharmacist: MIMSUser?, error: NSError?) ->()) {
         let department = try! Department(withName: "Pharmacy")
         let count = PFUser.query()!
+        count.whereKey("userType", equalTo: UserTypes.TechnicalUser.rawValue)
         count.countObjectsInBackgroundWithBlock { (countedUsers, error) in
             if error == nil {
                 let query = PFUser.query()!
                 query.whereKey("userType", equalTo: UserTypes.TechnicalUser.rawValue)
                 query.whereKey("department", equalTo: department)
-                query.limit = 1
                 query.skip = Int(arc4random_uniform(UInt32(countedUsers))+0)
                 query.getFirstObjectInBackgroundWithBlock({ (pharmacist, error) in
                     if error == nil && pharmacist != nil {
