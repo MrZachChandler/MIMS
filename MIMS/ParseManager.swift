@@ -611,12 +611,12 @@ class ParseClient {
     private class func findPharmacistToAssign(completion: (newPharmacist: MIMSUser?, error: NSError?) ->()) {
         let department = try! Department(withName: "Pharmacy")
         let count = PFUser.query()!
+        count.whereKey("userType", equalTo: UserTypes.TechnicalUser.rawValue)
         count.countObjectsInBackgroundWithBlock { (countedUsers, error) in
             if error == nil {
                 let query = PFUser.query()!
                 query.whereKey("userType", equalTo: UserTypes.TechnicalUser.rawValue)
                 query.whereKey("department", equalTo: department)
-                query.limit = 1
                 query.skip = Int(arc4random_uniform(UInt32(countedUsers))+0)
                 query.getFirstObjectInBackgroundWithBlock({ (pharmacist, error) in
                     if error == nil && pharmacist != nil {
