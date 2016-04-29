@@ -130,7 +130,7 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
             let indexPath:NSIndexPath = self.tableView.indexPathForSelectedRow!
             let detailVC:PatientInformationTableViewController = segue.destinationViewController as! PatientInformationTableViewController
             detailVC.title = name[indexPath.row]
-            detailVC.record = records![indexPath.row]
+            detailVC.patientRecord = records![indexPath.row]
             
         }
     }
