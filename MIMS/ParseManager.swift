@@ -588,7 +588,7 @@ class ParseClient {
                 let query = PFUser.query()!
                 query.whereKey("userType", equalTo: UserTypes.OperationalUser.rawValue)
                 let skip = Int(arc4random_uniform(UInt32(countedUsers))+0)
-                //query.skip = Int(arc4random_uniform(UInt32(countedUsers))+0)
+                query.skip = Int(arc4random_uniform(UInt32(countedUsers))+0)
                 query.getFirstObjectInBackgroundWithBlock({ (newDoctor, error) in
                     if error == nil && newDoctor != nil {
                         completion(newDoctor: newDoctor as? MIMSUser, error: nil)
