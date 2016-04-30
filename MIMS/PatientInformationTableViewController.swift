@@ -201,8 +201,13 @@ class PatientInformationTableViewController: UITableViewController {
                     
                     deleteAlert.addAction(UIAlertAction(title: "Continue", style: .Default, handler: { (action: UIAlertAction!) in
                         ParseClient.deletePatient(withPatientRecord: self.patientRecord, completion: { (success, error) in
-                            let vc = DashboardTableViewController()
-                            self.presentViewController(vc, animated: true, completion: nil)
+                            if success && error == nil {
+                                
+                            } else {
+                                let alert = getDefaultAlert("Uh oh", message: "Couldn't delete patient record", actions: nil, useDefaultAction: true)
+                                self.presentViewController(alert, animated: true, completion: nil)
+                            }
+
                         })
                         
                     }))
@@ -220,7 +225,10 @@ class PatientInformationTableViewController: UITableViewController {
                     
                     chargeAlert.addAction(UIAlertAction(title: "Okay", style: .Default, handler: { (action: UIAlertAction!) in
                         ParseClient.chargePatient(fromPatientRecord: self.patientRecord, andPatient: self.patient, completion: { (success) in
-                            
+                            if !success {
+                                let alert = getDefaultAlert("Uh oh", message: "Couldn't charge patient", actions: nil, useDefaultAction: true)
+                                self.presentViewController(alert, animated: true, completion: nil)
+                            }
                         })
                     }))
                     

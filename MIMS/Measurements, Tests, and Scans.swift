@@ -159,6 +159,22 @@ class Measurement: PFObject, PFSubclassing {
         self.inches = inches
     }
     
+    func getFeet() -> String {
+        return String(self.feet!)
+    }
+    
+    func getInches() -> String {
+        return String(self.inches!)
+    }
+    
+    func getSystolic() -> String {
+        return String(self.systolic!)
+    }
+    
+    func getDiastolic() -> String {
+        return String(self.diastolic!)
+    }
+    
     class func parseClassName() -> String {
         return "Measurement"
     }

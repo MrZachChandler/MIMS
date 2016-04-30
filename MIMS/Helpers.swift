@@ -153,6 +153,22 @@ class Address: PFObject, PFSubclassing {
         self.zipCode = zip
     }
     
+    func getStreet() -> String {
+        return self.street!
+    }
+    
+    func getState() -> String {
+        return self.state!
+    }
+    
+    func getZip() -> String {
+        return self.zipCode!
+    }
+    
+    func getCity() -> String {
+        return self.city!
+    }
+    
     class func parseClassName() -> String {
         return "Address"
     }

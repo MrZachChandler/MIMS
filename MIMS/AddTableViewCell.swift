@@ -29,10 +29,16 @@ class AddTableViewCell: UITableViewCell {
         delegate?.changedWithNewValue(self.textFielf.text!, forIndexPath: self.indexPath)
         print(textFielf.text)
     }
+    
+    @IBAction func didBeginEditing(sender: AnyObject) {
+        delegate?.beganEditingAtIndexPath(self.indexPath)
+    }
+
 
     @IBOutlet weak var DataNamw: UILabel!
 }
 
 protocol AddDataTableviewDelegate {
     func changedWithNewValue(newValue: String, forIndexPath: NSIndexPath)
+    func beganEditingAtIndexPath(indexPath: NSIndexPath)
 }

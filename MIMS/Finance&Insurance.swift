@@ -182,7 +182,7 @@ class InsuranceInfo: PFObject, PFSubclassing {
         guard memID != "" && grpID != "" && amount >= 0 else {
             throw InsuranceError.InvalidInsuranceInformation
         }
-        guard NSDate() >= expiryDate else {
+        guard NSDate() <= expiryDate else {
             throw InsuranceError.InvalidExpirationDate
         }
         self.expirationDate = expiryDate

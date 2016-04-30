@@ -84,7 +84,9 @@ class ParseClient {
     
     class func queryPatientRecords(key: String, value: AnyObject, completion: (patientRecords: [PatientRecord]?, error: NSError?) ->()) {
         let query = PFQuery(className: "PatientRecord")
-        query.whereKey(key, equalTo: value as! MIMSUser)
+        if MIMSUser.currentUser()!.userType! == "Operational" || MIMSUser.currentUser()!.userType! == "Technical" {
+            query.whereKey(key, equalTo: value as! MIMSUser)
+        }
         query.includeKey("patient")
         query.includeKey("appointments")
         query.includeKey("treatments")

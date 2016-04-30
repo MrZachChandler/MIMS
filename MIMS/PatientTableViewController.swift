@@ -116,6 +116,7 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
         for record in records {
             if record.attendingPhysician != MIMSUser.currentUser() {
                 self.queryPatientRecords()
+                break
             }
         }
     }
