@@ -262,6 +262,8 @@ class Patient: PFObject, PFSubclassing {
      - returns:
      */
     convenience init(initWithInfo name: String, married: Bool, gender: Bool, birthday: NSDate, ssn: String, address: Address, insuranceInfo: InsuranceInfo, financeData: FinancialInformation, phoneNumber: String) throws {
+        self.init()
+        //There's a bug in the Swift 2.2 compiler where if a convenience init throws before self is initialized, and the underlying class in an Objective-C object, then it will crash. Calling self.init before checking guard conditions seems silly, but that's the workaround.
         guard birthday <= NSDate() else {
             throw PatientError.InvalidBrthday
         }
@@ -275,7 +277,6 @@ class Patient: PFObject, PFSubclassing {
             throw PatientError.InvalidPhoneNumber
         }
         
-        self.init()
         self.name = name
         self.married = married
         self.gender = gender
