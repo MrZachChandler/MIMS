@@ -133,7 +133,9 @@ class ParseClient {
     
     class func queryAppointments(completion: (appointments: [Appointment]?, error: NSError?) ->()) {
         let query = PFQuery(className: "Appointment")
-        query.whereKey("doctor", equalTo: MIMSUser.currentUser()!)
+        if MIMSUser.currentUser()?.userType != UserTypes.AdminUser.rawValue {
+            query.whereKey("doctor", equalTo: MIMSUser.currentUser()!)
+        }
         query.whereKey("completed", notEqualTo: true)
         query.includeKey("patient")
         query.findObjectsInBackgroundWithBlock { (appointments, error) in

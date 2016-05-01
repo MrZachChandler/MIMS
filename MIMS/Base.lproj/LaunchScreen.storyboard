@@ -24,15 +24,26 @@
                                     <constraint firstAttribute="height" constant="201" id="vZP-hc-qLw"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="115"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="© 2016 UML Lovers" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MLi-fg-7eW">
+                                <rect key="frame" x="189" y="529" width="223" height="51"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="51" id="Lhz-cS-YSd"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="xb3-aO-Qok" firstAttribute="top" secondItem="MLi-fg-7eW" secondAttribute="bottom" constant="20" id="Hf9-mL-le1"/>
                             <constraint firstItem="XJE-Mp-62h" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="SRK-t7-Vfn"/>
                             <constraint firstItem="XJE-Mp-62h" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="fIT-Mg-DaC"/>
                             <constraint firstAttribute="trailingMargin" secondItem="XJE-Mp-62h" secondAttribute="trailing" id="sAB-jZ-hFf"/>
+                            <constraint firstItem="MLi-fg-7eW" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="squ-uo-V3C"/>
                             <constraint firstAttribute="leadingMargin" secondItem="XJE-Mp-62h" secondAttribute="leading" id="u99-K1-rCJ"/>
                         </constraints>
                     </view>

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import THCalendarDatePicker
 
 class AdmitPatientTableViewController: UITableViewController {
 
@@ -15,7 +16,7 @@ class AdmitPatientTableViewController: UITableViewController {
     let address = ["Street", "City", "State", "Zip Code"]
     let insuranceInformation = ["PaymentInformation", "Experation Date", "Mem ID", "Group ID", "Copay" ]
     let vitals = ["Height: ft","Height: in", "Weight: lb", "BP:Systolic", "BP:Diastolic"]
-    let appointmentInformation = ["Time", "Date"]
+    let appointmentInformation = ["Date", "Time"]
     
     //patient
     var name = ""
@@ -45,6 +46,10 @@ class AdmitPatientTableViewController: UITableViewController {
     var bpS = ""
     var bpD = ""
     
+    var appointmentTime = ""
+    var appointmentDay = ""
+    var appointmentDate: NSDate?
+    
     var patient: Patient?
     var patientRecord: PatientRecord?
     
@@ -68,6 +73,33 @@ class AdmitPatientTableViewController: UITableViewController {
         picker.maximumDate = NSDate.distantFuture()
         return picker
     }()
+    
+    lazy var appointmentPicker:THDatePickerViewController = {
+        var dp = THDatePickerViewController.datePicker()
+        dp.delegate = self
+        dp.setAllowClearDate(false)
+        dp.setClearAsToday(true)
+        dp.setAutoCloseOnSelectDate(false)
+        dp.setAllowSelectionOfSelectedDate(true)
+        dp.setDisableHistorySelection(true)
+        dp.setDisableFutureSelection(false)
+        //dp.autoCloseCancelDelay = 5.0
+        dp.selectedBackgroundColor = UIColor.blackColor() //UIColor(red: 125/255.0, green: 208/255.0, blue: 0/255.0, alpha: 1.0)
+        dp.currentDateColor = UIColor.lightGrayColor()// UIColor(red: 242/255.0, green: 121/255.0, blue: 53/255.0, alpha: 1.0)
+        dp.currentDateColorSelected = UIColor.darkGrayColor() //UIColor.yellowColor()
+        return dp
+    }()
+    
+    lazy var hourDatePicker: UIDatePicker = {
+        let screenSize = UIScreen.mainScreen().bounds
+        var hourPicker = UIDatePicker() //UIDatePicker(frame: CGRect(x: screenSize.minX, y: screenSize.maxY - 100, width: screenSize.width, height: 100))
+        hourPicker.datePickerMode = UIDatePickerMode.Time
+        let currentDate = self.appointmentDate
+        hourPicker.minimumDate = self.appointmentDate
+        hourPicker.minuteInterval = 10
+        return hourPicker
+    }()
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -106,6 +138,8 @@ class AdmitPatientTableViewController: UITableViewController {
         let _ = ParseClient.admitPatient(withPatientInfo: patientAddress, insuranceInfo: insurance, financeInfo: finances, name: self.name, maritalStatus: self.maritalStatus!, gender: self.gender!, birthday: self.birthdayDate!, ssn: self.ssn, phone: self.phone, vitalInformation: vitals, completion: { (success, errorMessage, patientRecord) in
             if success && patientRecord != nil {
                 //TODO: PResent success image
+                patientRecord?.addAppointment(Appointment(initWithDoctor: patientRecord!.attendingPhysician, patient: patientRecord!.patient!, timeScheduled: self.appointmentDate!))
+                patientRecord?.saveInBackground()
                 self.navigationController?.popViewControllerAnimated(true)
             } else if errorMessage != "" {
                 alert = getDefaultAlert("Uh oh", message: errorMessage, actions: nil, useDefaultAction: true)
@@ -181,7 +215,10 @@ class AdmitPatientTableViewController: UITableViewController {
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 4
+        if patientRecord != nil {
+            return 4
+        }
+        return 5
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -290,6 +327,18 @@ class AdmitPatientTableViewController: UITableViewController {
                 cell.textFielf.keyboardType = .NumberPad
             }
         }
+        if indexPath.section == 4 {
+            cell.DataNamw.text = appointmentInformation[indexPath.row]
+            if indexPath.row == 0 {
+                cell.textFielf.text = self.appointmentDay
+                cell.textFielf.addTarget(self, action: #selector(AdmitPatientTableViewController.presentDate(_:)), forControlEvents: .EditingDidBegin)
+            }
+            if indexPath.row == 1 {
+                cell.textFielf.text = self.appointmentTime
+                hourDatePicker.addTarget(self, action: #selector(AdmitPatientTableViewController.updateLabel(_:)), forControlEvents: .ValueChanged)
+                cell.textFielf.inputView = hourDatePicker
+            }
+        }
         
         cell.textFielf.sizeToFit()
         cell.selectionStyle = .None
@@ -323,7 +372,7 @@ class AdmitPatientTableViewController: UITableViewController {
         }
     
     func checkFields() -> Bool {
-        return self.birthdayDate != nil && self.name.characters.count > 0 && self.phone.characters.count > 0 && self.ssn.characters.count > 0 && self.gender != nil && self.maritalStatus != nil && self.street.characters.count > 0 && self.city.characters.count > 0 && self.state.characters.count > 0 && self.zipCode.characters.count > 0 && self.paymentInfo.characters.count > 0 && self.expirationDate != nil && self.memid.characters.count > 0 && self.groupid.characters.count > 0 && self.copay.characters.count > 0 && heightIn.characters.count > 0 && heightft.characters.count > 0 && weight.characters.count > 0 && bpD.characters.count > 0 && bpS.characters.count > 0
+        return self.birthdayDate != nil && self.name.characters.count > 0 && self.phone.characters.count > 0 && self.ssn.characters.count > 0 && self.gender != nil && self.maritalStatus != nil && self.street.characters.count > 0 && self.city.characters.count > 0 && self.state.characters.count > 0 && self.zipCode.characters.count > 0 && self.paymentInfo.characters.count > 0 && self.expirationDate != nil && self.memid.characters.count > 0 && self.groupid.characters.count > 0 && self.copay.characters.count > 0 && heightIn.characters.count > 0 && heightft.characters.count > 0 && weight.characters.count > 0 && bpD.characters.count > 0 && bpS.characters.count > 0 && self.appointmentDate != nil
     }
    
     /*
@@ -497,8 +546,71 @@ extension AdmitPatientTableViewController: AddDataTableviewDelegate {
             default:
                 break
             }
+        case 4:
+            switch index.row {
+            case 1:
+                let components = NSCalendar.currentCalendar().components(
+                    [NSCalendarUnit.Year, NSCalendarUnit.Month, NSCalendarUnit.Day, NSCalendarUnit.WeekOfYear, NSCalendarUnit.Hour, NSCalendarUnit.Minute, NSCalendarUnit.Second, NSCalendarUnit.Weekday, NSCalendarUnit.WeekdayOrdinal, NSCalendarUnit.WeekOfYear],
+                    fromDate: sender.date)
+                
+                if components.hour < 7 {
+                    components.hour = 7
+                    components.minute = 0
+                    sender.setDate(NSCalendar.currentCalendar().dateFromComponents(components)!, animated: true)
+                }
+                else if components.hour > 20 {
+                    components.hour = 20
+                    components.minute = 0
+                    sender.setDate(NSCalendar.currentCalendar().dateFromComponents(components)!, animated: true)
+                }
+                else {
+                }
+                let cell = self.tableView.cellForRowAtIndexPath(index) as! AddTableViewCell
+                self.appointmentTime = sender.date.getTimeForAppointment()
+                self.appointmentDate = sender.date
+                cell.textFielf.text = self.appointmentTime
+            default: break
+            }
         default:
             break
         }
+    }
+}
+
+extension AdmitPatientTableViewController: THDatePickerDelegate {
+    
+    func presentDate(sender: AnyObject) {
+        self.appointmentPicker.date = NSDate()
+        self.appointmentPicker.setDateHasItemsCallback({(date:NSDate!) -> Bool in
+            let tmp = (arc4random() % 30) + 1
+            return tmp % 5 == 0
+        })
+        self.presentSemiViewController(self.appointmentPicker, withOptions: [
+            self.convertCfTypeToString(KNSemiModalOptionKeys.shadowOpacity) as String! : 0.3 as Float,
+            self.convertCfTypeToString(KNSemiModalOptionKeys.animationDuration) as String! : 1.0 as Float,
+            self.convertCfTypeToString(KNSemiModalOptionKeys.pushParentBack) as String! : false as Bool
+            ])
+    }
+    /* https://vandadnp.wordpress.com/2014/07/07/swift-convert-unmanaged-to-string/ */
+    func convertCfTypeToString(cfValue: Unmanaged<NSString>!) -> String?{
+        /* Coded by Vandad Nahavandipoor */
+        let value = Unmanaged<CFStringRef>.fromOpaque(
+            cfValue.toOpaque()).takeUnretainedValue() as CFStringRef
+        if CFGetTypeID(value) == CFStringGetTypeID(){
+            return value as String
+        } else {
+            return nil
+        }
+    }
+    
+    func datePickerCancelPressed(datePicker: THDatePickerViewController!) {
+        dismissSemiModalView()
+    }
+    
+    func datePickerDonePressed(datePicker: THDatePickerViewController!) {
+        self.appointmentDate = datePicker.date.dateByAddingTimeInterval(NSTimeInterval(25200))
+        self.appointmentDay = appointmentDate!.getDateForAppointment()
+        self.tableView.reloadRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: 4)], withRowAnimation: .Automatic)
+        dismissSemiModalView()
     }
 }

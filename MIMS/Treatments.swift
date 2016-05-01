@@ -54,6 +54,13 @@ class Treatment: PFObject, PFSubclassing {
         return "Treatment"
     }
     
+    override init() {
+        super.init()
+        self.prescriptions = [Prescription]()
+        self.surgeries = [Surgery]()
+        self.immunizations = [Immunization]()
+    }
+    
     
 }
 

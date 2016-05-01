@@ -55,6 +55,7 @@ class MIMSUser: PFUser {
         guard let userType = UserTypes(rawValue: type) else {
             throw UserError.InvalidUserType
         }
+        appointments = [Appointment]()
         self.userType = userType.rawValue
         ParseClient.queryDepartments("name", value: department) { (departments, error) in
             if error == nil && departments != nil {

@@ -39,7 +39,7 @@ class PatientRecord: PFObject, PFSubclassing {
         get {
             return self["appointments"] as? [Appointment]
         }
-        set { self["appointments"] = newValue! }
+        set { self["appointments"] = newValue }
     }
     
     //Should only have one treatment object, which can have arrays of prescriptions, immunizations, and surgeries
@@ -134,6 +134,15 @@ class PatientRecord: PFObject, PFSubclassing {
     
     func addTest(newTest test: Test) {
         self.testsTaken?.append(test)
+    }
+    
+    override init() {
+        super.init()
+        self.appointments = [Appointment]()
+        self.scansTaken = [Scan]()
+        self.testsTaken = [Test]()
+        self.comments = [String]()
+        self.saveInBackground()
     }
     
     class func parseClassName() -> String {

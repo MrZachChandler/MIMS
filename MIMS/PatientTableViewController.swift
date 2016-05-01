@@ -171,6 +171,8 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
                     detailVC.title = patient.name
                     detailVC.patient = patient
                     detailVC.patientRecord = patientRecord
+                } else {
+                    return
                 }
             } else {
             detailVC.title = patients![indexPath.row]?.name

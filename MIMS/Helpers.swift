@@ -312,8 +312,8 @@ class Appointment: PFObject, PFSubclassing {
         set {self["patient"] = newValue}
     }
     
-    var department: Department {
-        get { return self["department"] as! Department }
+    var department: Department? {
+        get { return self["department"] as? Department }
         set {self["department"] = newValue }
     }
     
@@ -322,13 +322,13 @@ class Appointment: PFObject, PFSubclassing {
         set {}
     }
     
-    convenience init(initWithDoctor doctor: MIMSUser, patient: Patient, timeScheduled: NSDate, department: Department) {
+    convenience init(initWithDoctor doctor: MIMSUser, patient: Patient, timeScheduled: NSDate) {
         self.init()
         self.attendingPhysician = doctor
         self.associatedPatient = patient
         self.timeScheduled = timeScheduled
-        self.department = department
         self.completed = false
+        self.appointmentNotes = [String]()
     }
     
     func markAsCompleted() {
