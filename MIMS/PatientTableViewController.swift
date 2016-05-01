@@ -14,7 +14,12 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
     var menuButton: UIButton!
     
     var patients: [Int: Patient]?
+    var patientArray: [Patient]?
+    var filteredPatients: [Patient]?
+    var filteredRecords = [PatientRecord]()
     var records = [PatientRecord]()
+    
+    var searchController = UISearchController(searchResultsController: nil)
     
 
     override func viewDidLoad() {
@@ -40,14 +45,26 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
         }
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
-        
+        searchController.searchResultsUpdater = self
+        searchController.dimsBackgroundDuringPresentation = false
+        searchController.hidesNavigationBarDuringPresentation = false
+        searchController.searchBar.scopeButtonTitles = []
+        tableView.tableHeaderView = searchController.searchBar
+        searchController.searchBar.sizeToFit()
+        definesPresentationContext = true
         self.setNeedsStatusBarAppearanceUpdate()
         self.tableView.tableFooterView = UIView()
+        self.extendedLayoutIncludesOpaqueBars = true
         // Do any additional setup after loading the view.
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        if searchController.active {
+//            searchController.active = false
+//            self.tableView.scrollToRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 0), atScrollPosition: .Top, animated: true)
+            self.tableView.reloadData()
+        }
         self.queryUpdate()
     }
     
@@ -67,6 +84,10 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
+        if searchController.active && searchController.searchBar.text != "" {
+            return filteredRecords.count
+        }
+        
         guard records.count > 0 else { return 0}
         return records.count
     }
@@ -74,15 +95,21 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("MIMS", forIndexPath: indexPath) as! MIMSTableViewCell
+        var tempRecord: PatientRecord
+        var patient: Patient
+        if searchController.active && searchController.searchBar.text != "" {
+            tempRecord = filteredRecords[indexPath.row]
+        } else {
+            tempRecord = records[indexPath.row]
+        }
         
-        let tempRecord = records[indexPath.row]
-        if let patient = patients![indexPath.row] {
-            if !patient.dirty {
+        patient = tempRecord.patient!
+        if let patientToDisplay = patients![indexPath.row] {
+            if patient == patientToDisplay && !patient.dirty {
             cell.bindPatientWithoutData(patient)
             return cell
             }
         }
-        let patient = tempRecord.patient!
         cell.bindPatient(patientToBind: patient) { (patient) in
             self.patients![indexPath.row] = patient
         }
@@ -103,6 +130,10 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
             {
                 self.records = patientRecords!
                 self.patients = [Int: Patient]()
+                self.patientArray = [Patient]()
+                for record in self.records {
+                    self.patientArray?.append(record.patient!)
+                }
                 self.tableView.reloadData()
             }
         }
@@ -133,11 +164,43 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
         if segue.identifier == "Information" {
             let indexPath:NSIndexPath = self.tableView.indexPathForSelectedRow!
             let detailVC:PatientInformationTableViewController = segue.destinationViewController as! PatientInformationTableViewController
+            if searchController.active && searchController.searchBar.text != "" {
+                let patientRecord = filteredRecords[indexPath.row]
+                if let indexOfPatient = filteredPatients?.indexOf({ $0.objectId == patientRecord.patient!.objectId }) {
+                    let patient = filteredPatients![indexOfPatient]
+                    detailVC.title = patient.name
+                    detailVC.patient = patient
+                    detailVC.patientRecord = patientRecord
+                }
+            } else {
             detailVC.title = patients![indexPath.row]?.name
             detailVC.patient = patients![indexPath.row]
             detailVC.patientRecord = records[indexPath.row]
-            
+            }
         }
     }
 
+}
+
+extension PatientTableViewController: UISearchControllerDelegate, UISearchResultsUpdating {
+    func filterContentForSearchText(searchText: String, scope: String = "All") {
+        filteredRecords.removeAll()
+        filteredRecords = records.filter({ (record) -> Bool in
+            return record.patient!.name.lowercaseString.containsString(searchText.lowercaseString)
+        })
+        tableView.reloadData()
+    }
+    
+    func filterOtherContentForSearchText(searchText: String) {
+        filteredPatients?.removeAll()
+        filteredPatients = patients?.values.filter({ (patient) -> Bool in
+            return patient.name.lowercaseString.containsString(searchText.lowercaseString)
+        })
+    }
+    
+    func updateSearchResultsForSearchController(searchController: UISearchController) {
+        filterContentForSearchText(self.searchController.searchBar.text!)
+        filterOtherContentForSearchText(self.searchController.searchBar.text!)
+    }
+    
 }
