@@ -54,8 +54,8 @@ class Treatment: PFObject, PFSubclassing {
         return "Treatment"
     }
     
-    override init() {
-        super.init()
+    convenience init(defaultInit: Bool) {
+        self.init()
         self.prescriptions = [Prescription]()
         self.surgeries = [Surgery]()
         self.immunizations = [Immunization]()

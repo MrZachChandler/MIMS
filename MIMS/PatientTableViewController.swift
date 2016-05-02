@@ -130,10 +130,6 @@ class PatientTableViewController: UITableViewController, SWRevealViewControllerD
             {
                 self.records = patientRecords!
                 self.patients = [Int: Patient]()
-                self.patientArray = [Patient]()
-                for record in self.records {
-                    self.patientArray?.append(record.patient!)
-                }
                 self.tableView.reloadData()
             }
         }

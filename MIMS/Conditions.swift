@@ -144,12 +144,14 @@ class Condition: PFObject, PFSubclassing {
         set {self["causeOfDeath"] = newValue}
     }
     
-    override init() {
-        super.init()
+    convenience init(defaultInit: Bool) {
+        self.init()
         self.disease = [String]()
         self.allergies = [String]()
         self.disorders = [String]()
+        
     }
+
     /**
      Method to add a new disease to the patient record
      

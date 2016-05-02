@@ -136,13 +136,12 @@ class PatientRecord: PFObject, PFSubclassing {
         self.testsTaken?.append(test)
     }
     
-    override init() {
-        super.init()
+    convenience init(initDefault: Bool) {
+        self.init()
         self.appointments = [Appointment]()
         self.scansTaken = [Scan]()
         self.testsTaken = [Test]()
         self.comments = [String]()
-        self.saveInBackground()
     }
     
     class func parseClassName() -> String {

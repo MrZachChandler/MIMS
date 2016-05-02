@@ -28,7 +28,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="© 2016 UML Lovers" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MLi-fg-7eW">
-                                <rect key="frame" x="189" y="529" width="223" height="51"/>
+                                <rect key="frame" x="188.5" y="529" width="223" height="51"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="51" id="Lhz-cS-YSd"/>
                                 </constraints>
