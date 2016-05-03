@@ -35,6 +35,12 @@ class SelectionListTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
         if listflag == 0
         {
             
@@ -54,7 +60,7 @@ class SelectionListTableViewController: UITableViewController {
                 if patientRecord.testsTaken == nil
                 {
                     tableData = ["No Test have been taken."]
-
+                    
                 }
                 else
                 {
@@ -165,10 +171,11 @@ class SelectionListTableViewController: UITableViewController {
                 break
             case 1:
                 //complete patient tests
-                for _ in self.sendingResults {
+                for testSelected in self.sendingResults {
                     for test in self.patientRecord.testsTaken! {
-                        if test.testDescription == test {
-                            test.completedStatus = true
+                        if test.testDescription! == testSelected {
+                            test.changeCompletionStatus(true, timeCompleted: NSDate())
+                            test.saveInBackground()
                         }
                     }
                 }

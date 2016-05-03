@@ -347,7 +347,6 @@ class ParseClient {
         for testDescription in newlyRequestedTests {
             record.addTest(newTest: Test(initWithTestDescription: testDescription))
         }
-        record.saveEventually()
     }
     
     /**
