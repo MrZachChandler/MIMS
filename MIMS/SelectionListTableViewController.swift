@@ -48,6 +48,7 @@ class SelectionListTableViewController: UITableViewController {
                 else
                 {
                     tableData = (patientRecord.conditions?.allergies)!
+                    
                 }
             case 5:
                 if patientRecord.testsTaken == nil
@@ -120,6 +121,8 @@ class SelectionListTableViewController: UITableViewController {
         let sizeArray = [Bool](count: tableData.count, repeatedValue: false)
         checked = sizeArray
         
+        tableData = tableData.map {$0.localizedCapitalizedString}
+        
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -128,56 +131,7 @@ class SelectionListTableViewController: UITableViewController {
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
     }
     
-    //    func fillArrayWithRawValues() {
-    //        rawValueArray = [String]()
-    //        if tempObject is [String] { //it's allergies!
-    //            for allergy in iterateEnum(Allergy.Allergies.self) {
-    //                rawValueArray.append(allergy.rawValue)
-    //            }
-    //        }
-    //
-    //        if tempObject is [Prescription] {
-    //            for script in tempObject as! [Prescription] {
-    //                script.fetchInBackgroundWithBlock({ (newScript, error) in
-    //                    if error == nil {
-    //                    self.rawValueArray.append((newScript as! Prescription).scripts!)
-    //                    }
-    //                })
-    //            }
-    //        }
-    //
-    //        if tempObject is [Disease] {
-    //
-    //        }
-    //    }
-    //
-    //    func createDiseaseArray() -> [String] {
-    //        var diseaseArray = [String]()
-    //
-    //        for disease in iterateEnum(Disease.Disease.self) {
-    //            diseaseArray.append(disease.rawValue)
-    //        }
-    //
-    //        return diseaseArray
-    //    }
-    //
-    //    func createDisorderArray() -> [String] {
-    //        var disorderArray = [String]()
-    //
-    //        for disorder in iterateEnum(Disorder.Disorders.self) {
-    //            disorderArray.append(disorder.rawValue)
-    //        }
-    //        return disorderArray
-    //    }
-    //
-    //    func createAllergyArray() -> [String] {
-    //        var allergyArray = [String]()
-    //
-    //        for allergy in iterateEnum(Allergy.Allergies.self) {
-    //            allergyArray.append(allergy.rawValue)
-    //        }
-    //        return allergyArray
-    //    }
+
     
     func createSymptoms() -> [String] {
         var symptoms = [String]()
@@ -209,11 +163,13 @@ class SelectionListTableViewController: UITableViewController {
                 ParseClient.addPatientTests(self.sendingResults, toPatientRecord: patientRecord)
             case 2:
                 //symptoms
-                guard let patientConditions = self.patientRecord.conditions else {
-                    return
+                var patientConditions: Condition!
+                if self.patientRecord.conditions == nil {
+                    patientConditions = Condition(defaultInit: true)
+                    self.patientRecord.conditions = patientConditions
                 }
-                for newSymptom in self.sendingResults {
-                    newSymptom.lowercaseString
+                for var newSymptom in self.sendingResults {
+                    newSymptom = newSymptom.lowercaseString
                     do {
                         if let allergy = try? Allergy(withAllergyName: newSymptom) {
                             try patientConditions.addAllergy(allergy.description)
@@ -222,15 +178,16 @@ class SelectionListTableViewController: UITableViewController {
                         } else if let disorder = try? Disorder(withDisorderName: newSymptom) {
                             try patientConditions.addDisorder(disorder.description)
                         }
-                        patientConditions.saveInBackgroundWithBlock({ (success, error) in
-                            if success && error == nil {
-                                self.navigationController?.popViewControllerAnimated(true)
-                            }
-                        })
+
                     } catch let error {
                         //TODO: Present Error
                     }
                 }
+                patientRecord.saveInBackgroundWithBlock({ (success, error) in
+                    if success && error == nil {
+                        self.navigationController?.popViewControllerAnimated(true)
+                    }
+                })
                 break
             case 3:
                 //issue treatment
