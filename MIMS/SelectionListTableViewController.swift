@@ -110,7 +110,10 @@ class SelectionListTableViewController: UITableViewController {
             case 0:
                 tableData = test
             case 1:
-                tableData = test
+                let nonCompletedTests = self.patientRecord.testsTaken!.filter({ (test) -> Bool in
+                    return !test.completedStatus!
+                })
+                tableData = nonCompletedTests.map {$0.testDescription!}
             case 2:
                 tableData = createSymptoms()
             case 3:
@@ -158,16 +161,31 @@ class SelectionListTableViewController: UITableViewController {
             switch flag {
             case 0:
                 //request patient test
+                ParseClient.addPatientTests(self.sendingResults, toPatientRecord: patientRecord)
+                self.navigationController?.popViewControllerAnimated(true)
                 break
             case 1:
                 //complete patient tests
-                ParseClient.addPatientTests(self.sendingResults, toPatientRecord: patientRecord)
+                for _ in self.sendingResults {
+                    for test in self.patientRecord.testsTaken! {
+                        if test.testDescription == test {
+                            test.completedStatus = true
+                        }
+                    }
+                }
+                self.patientRecord.saveInBackgroundWithBlock({ (success, error) in
+                    if success && error == nil {
+                        self.navigationController?.popViewControllerAnimated(true)
+                    }
+                })
             case 2:
                 //symptoms
                 var patientConditions: Condition!
                 if self.patientRecord.conditions == nil {
                     patientConditions = Condition(defaultInit: true)
                     self.patientRecord.conditions = patientConditions
+                } else {
+                    patientConditions = self.patientRecord.conditions!
                 }
                 for var newSymptom in self.sendingResults {
                     newSymptom = newSymptom.lowercaseString
@@ -180,8 +198,10 @@ class SelectionListTableViewController: UITableViewController {
                             try patientConditions.addDisorder(disorder.description)
                         }
 
-                    } catch let error {
+                    } catch let error as NSError {
                         //TODO: Present Error
+                        let alert = getDefaultAlert("Uh oh", message: error.localizedDescription, actions: nil, useDefaultAction: true)
+                        self.presentViewController(alert, animated: true, completion: nil)
                     }
                 }
                 patientRecord.saveInBackgroundWithBlock({ (success, error) in
@@ -192,8 +212,12 @@ class SelectionListTableViewController: UITableViewController {
                 break
             case 3:
                 //issue treatment
-                guard let patientTreatmentRecord = self.patientRecord.treatments else {
-                    return
+                var patientTreatmentRecord: Treatment!
+                if self.patientRecord.treatments == nil {
+                    let treatment = Treatment(defaultInit: true)
+                    self.patientRecord.treatments = treatment
+                } else {
+                    patientTreatmentRecord = self.patientRecord.treatments!
                 }
                 for request in self.sendingResults {
                     patientTreatmentRecord.addSurgery(Surgery(withSurgeon: MIMSUser.currentUser()!, surgeryName: request))
@@ -205,6 +229,21 @@ class SelectionListTableViewController: UITableViewController {
                 })
             case 4:
                 //prescribe medicine
+                var patientTreatmentRecord: Treatment!
+                if self.patientRecord.treatments == nil {
+                    let treatment = Treatment(defaultInit: true)
+                    self.patientRecord.treatments = treatment
+                } else {
+                    patientTreatmentRecord = self.patientRecord.treatments!
+                }
+                for medication in self.sendingResults {
+                    patientTreatmentRecord.addNewScript(Prescription(withPharmacist: MIMSUser.currentUser()!, newScript: medication))
+                }
+                patientTreatmentRecord.saveInBackgroundWithBlock({ (success, error) in
+                    if success && error == nil {
+                        self.navigationController?.popViewControllerAnimated(true)
+                    }
+                })
                 break
             default:
                 break
