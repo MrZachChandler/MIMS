@@ -21,7 +21,7 @@ class PatientInformationTableViewController: UITableViewController {
     
     let vitalsData = ["Height", "Weight", "Blood Pressure", "Time Taken"]
     
-    let technicalActionData = ["Complete Patient Test", "Diagnose Symptoms", "Check Patient Status", "Manage Patient Info"]
+    let technicalActionData = ["Diagnose Symptoms","Complete Patient Test", "Check Patient Status", "Manage Patient Info"]
     let adminData = [ "Discharge Patient", "Manage Patient Info", "Delete Patient Record", "Charge Patient", "Manage Patient Insurence"]
     let operationalData = ["Request Patient Test", "Complete Patient Test", "Diagnose Symptom", "Issue Treatment", "Prescribe Medication","Check Patient Status", "Transfer Patient"]
     
@@ -205,7 +205,8 @@ class PatientInformationTableViewController: UITableViewController {
                 }
                 //manage patient information
                 if indexPath.row == 1 {
-                    
+                    self.performSegueWithIdentifier("editInfo", sender: tableView)
+
                 }
                 //delete patient record
                 if indexPath.row == 2 {
@@ -252,23 +253,50 @@ class PatientInformationTableViewController: UITableViewController {
                 }
                 //manage patient insurence
                 if indexPath.row == 4 {
-                    
+                    self.performSegueWithIdentifier("editInfo", sender: tableView)
+
                 }
             }
         case UserTypes.TechnicalUser.rawValue:
             if indexPath.section == 0 {
-                
+                //allergies
+                if indexPath.row == 4 {
+                    selectionFlag = 4
+                    listFlag = 0
+                    self.performSegueWithIdentifier("List", sender: tableView)
+                }
+                //symptoms
+                if indexPath.row == 5 {
+                    selectionFlag = 5
+                    listFlag = 0
+                    self.performSegueWithIdentifier("List", sender: tableView)
+                }
+                //required test
+                if indexPath.row == 6 {
+                    selectionFlag = 6
+                    listFlag = 0
+                    self.performSegueWithIdentifier("List", sender: tableView)
+                }
+                // medication
+                if indexPath.row == 7 {
+                    selectionFlag = 7
+                    listFlag = 0
+                    self.performSegueWithIdentifier("List", sender: tableView)
+                }
             }
-            if indexPath.section == 1 {
-                //complete patient test
+            if indexPath.section == 2 {
+                //diagnose
                 if indexPath.row == 0 {
+                    selectionFlag = 5
+                    listFlag = 0
                     self.performSegueWithIdentifier("List", sender: tableView)
 
                 }
-                //diagnose symptoms
+                //complete patient test
                 if indexPath.row == 1 {
-                    self.performSegueWithIdentifier("List", sender: tableView)
-                }
+                    selectionFlag = 5
+                    listFlag = 0
+                    self.performSegueWithIdentifier("List", sender: tableView)                }
                 //chaeck patient status
                 if indexPath.row == 2 {
                     var stat = ""
@@ -290,7 +318,7 @@ class PatientInformationTableViewController: UITableViewController {
                 }
                 //manage patient info
                 if indexPath.row == 3 {
-                    
+                    self.performSegueWithIdentifier("editInfo", sender: tableView)
                 }
                 
             }
@@ -451,7 +479,6 @@ class PatientInformationTableViewController: UITableViewController {
             }
             if flag == UserTypes.TechnicalUser.rawValue
             {
-                detailVC.title = technicalActionData[indexPath.row]
                 detailVC.title = "Complete Tests"
             }
                 //else operational user
@@ -469,6 +496,22 @@ class PatientInformationTableViewController: UITableViewController {
             detailVC.navigationItem.backBarButtonItem?.title = "Back"
             detailVC.patientRecord = self.patientRecord
             detailVC.patient = self.patient
+        }
+        if segue.identifier == "editInfo" {
+            if flag == UserTypes.TechnicalUser.rawValue
+            {
+                let detailVC:AdmitPatientTableViewController = segue.destinationViewController as! AdmitPatientTableViewController
+                detailVC.title = self.title
+                detailVC.patientRecord = self.patientRecord
+                detailVC.patient = self.patient
+            }
+            else
+            {
+                let detailVC:AdmitPatientTableViewController = segue.destinationViewController as! AdmitPatientTableViewController
+                detailVC.title = self.title
+                detailVC.patientRecord = self.patientRecord
+                detailVC.patient = self.patient
+            }
         }
     }
     

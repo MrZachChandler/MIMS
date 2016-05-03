@@ -281,6 +281,11 @@ class DashboardTableViewController: UITableViewController, SWRevealViewControlle
             }
 
         }
+        if flag == UserTypes.TechnicalUser.rawValue {
+            if indexPath.section == 0 {
+                self.performSegueWithIdentifier("manage", sender: tableView)
+            }
+        }
         print("Indexpath.row")
         print(indexPath.row)
     }

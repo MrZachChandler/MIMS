@@ -13,6 +13,8 @@
 		2F051A1E1CD3CA7B00506ABE /* AddTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F051A1D1CD3CA7B00506ABE /* AddTableViewCell.swift */; };
 		2F7D06081CCA9DF20081F59D /* MIMSCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2F7D06071CCA9DF20081F59D /* MIMSCell.xib */; };
 		2F7D060B1CCA9FA60081F59D /* MIMSTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7D060A1CCA9FA60081F59D /* MIMSTableViewCell.swift */; };
+		2FB85D471CD9665F00D0DC8B /* redcross.png in Resources */ = {isa = PBXBuildFile; fileRef = 2FB85D461CD9665F00D0DC8B /* redcross.png */; };
+		2FB85D4B1CD9666D00D0DC8B /* phiperson.png in Resources */ = {isa = PBXBuildFile; fileRef = 2FB85D4A1CD9666D00D0DC8B /* phiperson.png */; };
 		2FB8F58B1CCD6AE9002C0E12 /* PatientInformationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FB8F58A1CCD6AE9002C0E12 /* PatientInformationTableViewController.swift */; };
 		2FD137AC1CCE8C6A00FEDC1A /* SelectionListTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FD137AB1CCE8C6A00FEDC1A /* SelectionListTableViewController.swift */; };
 		6787431709933676BEAB7178 /* Pods_MIMS_MIMSTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14CE67DC1A201621FFADB68E /* Pods_MIMS_MIMSTests.framework */; };
@@ -65,6 +67,8 @@
 		2F051A1D1CD3CA7B00506ABE /* AddTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddTableViewCell.swift; sourceTree = "<group>"; };
 		2F7D06071CCA9DF20081F59D /* MIMSCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MIMSCell.xib; sourceTree = "<group>"; };
 		2F7D060A1CCA9FA60081F59D /* MIMSTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MIMSTableViewCell.swift; sourceTree = "<group>"; };
+		2FB85D461CD9665F00D0DC8B /* redcross.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = redcross.png; sourceTree = "<group>"; };
+		2FB85D4A1CD9666D00D0DC8B /* phiperson.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = phiperson.png; sourceTree = "<group>"; };
 		2FB8F58A1CCD6AE9002C0E12 /* PatientInformationTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatientInformationTableViewController.swift; sourceTree = "<group>"; };
 		2FD137AB1CCE8C6A00FEDC1A /* SelectionListTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectionListTableViewController.swift; sourceTree = "<group>"; };
 		7CB677F43484CB2D4FB2691F /* Pods_MIMS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MIMS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -274,7 +278,9 @@
 		8FF2F8EB1CC526E800E207B3 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				2FB85D4A1CD9666D00D0DC8B /* phiperson.png */,
 				8F2742621CC9C8A400D7B4B6 /* Close Window Filled-100.png */,
+				2FB85D461CD9665F00D0DC8B /* redcross.png */,
 				8F2742631CC9C8A400D7B4B6 /* Administrator Male Filled-100.png */,
 				8F2742641CC9C8A400D7B4B6 /* Heart Monitor Filled-100.png */,
 				8F2742651CC9C8A400D7B4B6 /* Appointment Reminders Filled-100.png */,
@@ -395,6 +401,8 @@
 				8F27426A1CC9C8A400D7B4B6 /* Heart Monitor Filled-100.png in Resources */,
 				8F27426B1CC9C8A400D7B4B6 /* Appointment Reminders Filled-100.png in Resources */,
 				8F0CD4291CB737F500615490 /* Assets.xcassets in Resources */,
+				2FB85D471CD9665F00D0DC8B /* redcross.png in Resources */,
+				2FB85D4B1CD9666D00D0DC8B /* phiperson.png in Resources */,
 				8F2742681CC9C8A400D7B4B6 /* Close Window Filled-100.png in Resources */,
 				8F2742691CC9C8A400D7B4B6 /* Administrator Male Filled-100.png in Resources */,
 				8F0CD4271CB737F500615490 /* Main.storyboard in Resources */,

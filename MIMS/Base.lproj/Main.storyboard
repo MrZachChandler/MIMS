@@ -18,15 +18,9 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="MIMS" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aYi-rT-mQ9">
-                                <rect key="frame" x="20" y="20" width="560" height="130"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="130" id="Tn4-wO-R50"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="90"/>
-                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="phiperson.png" translatesAutoresizingMaskIntoConstraints="NO" id="1vo-Wi-X6P">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                            </imageView>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" placeholder="Username" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="ZEn-xK-mt9">
                                 <rect key="frame" x="20" y="285" width="560" height="30"/>
                                 <constraints>
@@ -58,6 +52,15 @@
                                     <action selector="loginPressed:" destination="Vgs-JY-w7j" eventType="touchUpInside" id="fp3-4e-xZe"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="MIMS" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aYi-rT-mQ9">
+                                <rect key="frame" x="20" y="20" width="560" height="130"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="130" id="Tn4-wO-R50"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="90"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -69,11 +72,15 @@
                             <constraint firstItem="ZEn-xK-mt9" firstAttribute="centerX" secondItem="4AX-d2-Wdk" secondAttribute="centerX" id="GD4-7q-dIc"/>
                             <constraint firstItem="ZEn-xK-mt9" firstAttribute="top" secondItem="oNI-OF-KRp" secondAttribute="bottom" constant="265" id="LP5-NA-2JE"/>
                             <constraint firstAttribute="trailingMargin" secondItem="RTN-Yq-ZEr" secondAttribute="trailing" id="Mia-9n-YEM"/>
+                            <constraint firstItem="1vo-Wi-X6P" firstAttribute="centerX" secondItem="ZEn-xK-mt9" secondAttribute="centerX" id="ORS-rW-ywf"/>
+                            <constraint firstItem="1vo-Wi-X6P" firstAttribute="centerY" secondItem="ZEn-xK-mt9" secondAttribute="centerY" id="V8m-Kn-S3Q"/>
                             <constraint firstItem="RTN-Yq-ZEr" firstAttribute="top" secondItem="ai7-1J-VnV" secondAttribute="bottom" constant="135" id="a0c-62-hTa"/>
                             <constraint firstItem="zr9-lz-WeR" firstAttribute="height" secondItem="ZEn-xK-mt9" secondAttribute="height" id="cUI-aT-Bvy"/>
+                            <constraint firstItem="1vo-Wi-X6P" firstAttribute="bottom" secondItem="SDg-BU-PD1" secondAttribute="top" id="dBw-HM-J3r"/>
                             <constraint firstItem="SDg-BU-PD1" firstAttribute="top" secondItem="RTN-Yq-ZEr" secondAttribute="bottom" constant="8" id="dGd-Ej-Xvp"/>
                             <constraint firstAttribute="leadingMargin" secondItem="RTN-Yq-ZEr" secondAttribute="leading" id="hhg-rH-62h"/>
                             <constraint firstItem="aYi-rT-mQ9" firstAttribute="centerX" secondItem="4AX-d2-Wdk" secondAttribute="centerX" id="iFU-d8-a9x"/>
+                            <constraint firstItem="1vo-Wi-X6P" firstAttribute="leading" secondItem="4AX-d2-Wdk" secondAttribute="leading" id="kVW-Xc-yF5"/>
                             <constraint firstItem="aYi-rT-mQ9" firstAttribute="top" secondItem="oNI-OF-KRp" secondAttribute="bottom" id="sZo-ZN-bTe"/>
                             <constraint firstAttribute="leadingMargin" secondItem="aYi-rT-mQ9" secondAttribute="leading" id="tvW-lZ-HLX"/>
                         </constraints>
@@ -463,6 +470,7 @@
                     <navigationItem key="navigationItem" id="t1c-Ir-oQ7"/>
                     <connections>
                         <segue destination="UPn-WF-Cu2" kind="show" identifier="List" id="H2U-rL-I8n"/>
+                        <segue destination="BO1-yS-12R" kind="show" identifier="editInfo" id="UM0-la-6bf"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dIg-ip-nhI" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -601,10 +609,12 @@
         <image name="Close Window Filled-100.png" width="100" height="100"/>
         <image name="Dashboard Filled-100.png" width="100" height="100"/>
         <image name="Heart Monitor Filled-100.png" width="100" height="100"/>
+        <image name="phiperson.png" width="180" height="180"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="whc-Ia-u6F"/>
         <segue reference="9Up-Hn-9re"/>
         <segue reference="WVF-GS-d8z"/>
+        <segue reference="UM0-la-6bf"/>
     </inferredMetricsTieBreakers>
 </document>

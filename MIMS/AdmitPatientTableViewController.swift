@@ -11,6 +11,10 @@ import THCalendarDatePicker
 
 class AdmitPatientTableViewController: UITableViewController {
 
+    //flag for technical user
+    var techFlag = 0
+    //1 = not tech user
+    
     //titles
     let informationData = ["Name", "Birthday", "Phone", "S.S.N.", "Gender", "Marital Status"]
     let address = ["Street", "City", "State", "Zip Code"]
@@ -197,6 +201,7 @@ class AdmitPatientTableViewController: UITableViewController {
             self.patient!.birthday = self.birthdayDate!
             self.patient!.gender = self.gender!
             self.patient!.married = self.maritalStatus!
+            patient!.saveInBackground()
             
             let address = self.patient!.address
             try! address.changeCity(self.city)
@@ -204,12 +209,14 @@ class AdmitPatientTableViewController: UITableViewController {
             try! address.changeState(self.state)
             try! address.changeStreet(self.street)
             self.patient!.address = address
+            address.saveInBackground()
             
             let vitals = self.patientRecord!.measurements!
             try! vitals.addHeight(Int(self.heightft)!, inches: Double(self.heightIn)!)
             try! vitals.addNewBloodPressure(Int(self.bpS)!, diastolic: Int(self.bpD)!)
             vitals.weight = Double(self.weight)
             self.patientRecord!.measurements = vitals
+            vitals.saveInBackground()
             
             let paymentInfo = self.patient!.financials
             let insurance = self.patient!.insurance
@@ -219,6 +226,8 @@ class AdmitPatientTableViewController: UITableViewController {
             insurance.memberID = self.memid
             insurance.groupID = self.groupid
             insurance.copay = Int(self.copay)
+            paymentInfo.saveInBackground()
+            insurance.saveInBackground()
             self.patient!.financials = paymentInfo
             self.patient!.insurance = insurance
             
@@ -240,6 +249,7 @@ class AdmitPatientTableViewController: UITableViewController {
         self.phone = patient!.phoneNumber!
         self.ssn = patient!.ssn
         self.birthday = patient!.birthday.getDateForAppointment()
+        self.birthdayDate = patient!.birthday
         self.gender = patient!.gender
         self.maritalStatus = patient!.married
         
@@ -259,11 +269,13 @@ class AdmitPatientTableViewController: UITableViewController {
         let paymentInfo = self.patient!.financials
         let insurance = self.patient!.insurance
         self.paymentInfo = paymentInfo.paymentInfo!
+        self.expirationDate = insurance.expirationDate!
         self.expiration = insurance.expirationDate!.getDateForAppointment()
         self.memid = insurance.memberID!
         self.groupid = insurance.groupID!
         self.copay = String(insurance.copay!)
         
+        self.appointmentDate = NSDate()
     }
     // MARK: - Table view data source
 
@@ -398,6 +410,11 @@ class AdmitPatientTableViewController: UITableViewController {
         cell.selectionStyle = .None
         cell.indexPath = indexPath
         cell.delegate = self
+        if techFlag == 0 {
+            if indexPath.section == 2 {
+                cell.textFielf.alpha = 0.0
+            }
+        }
         return cell
     }
     override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
