@@ -55,7 +55,8 @@ class AdmitPatientTableViewController: UITableViewController {
     
     var editingIndex: NSIndexPath?
     
-    
+    //-1 for nothing, 0 for manage insurance, 1 for manage finance information
+    var flag = -1
     var inputtedText = [NSIndexPath: String]()
     
     lazy var datePicker: UIDatePicker = {
@@ -123,29 +124,25 @@ class AdmitPatientTableViewController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    @IBAction func saveTapped(sender: AnyObject) {
+    func saveNewPatient() {
         var alert: UIAlertController!
-        guard checkFields() else {
-            alert = getDefaultAlert("Uh oh", message: "You left some information blank!", actions: nil, useDefaultAction: true)
-            self.presentViewController(alert, animated: true, completion: nil)
-            return
-        }
+
         do {
-        let patientAddress = try Address(initWithAddressData: self.street, city: self.city, state: self.state, zip: self.zipCode)
-        let finances = try FinancialInformation(initWithPaymentInfo: self.paymentInfo)
-        let insurance = try InsuranceInfo(initWith: expirationDate!, memID: self.memid, grpID: self.groupid, amount: Int(self.copay)!)
-        let vitals = try Measurement(initWithVitalData: Int(self.heightft)!, inches: Double(self.heightIn)!, weight: Double(self.weight)!, systolic: Int(self.bpS)!, diastolic: Int(self.bpD)!)
-        let _ = ParseClient.admitPatient(withPatientInfo: patientAddress, insuranceInfo: insurance, financeInfo: finances, name: self.name, maritalStatus: self.maritalStatus!, gender: self.gender!, birthday: self.birthdayDate!, ssn: self.ssn, phone: self.phone, vitalInformation: vitals, completion: { (success, errorMessage, patientRecord) in
-            if success && patientRecord != nil {
-                //TODO: PResent success image
-                patientRecord?.addAppointment(Appointment(initWithDoctor: patientRecord!.attendingPhysician, patient: patientRecord!.patient!, timeScheduled: self.appointmentDate!))
-                patientRecord?.saveInBackground()
-                self.navigationController?.popViewControllerAnimated(true)
-            } else if errorMessage != "" {
-                alert = getDefaultAlert("Uh oh", message: errorMessage, actions: nil, useDefaultAction: true)
-                self.presentViewController(alert, animated: true, completion: nil)
-            }
-        })
+            let patientAddress = try Address(initWithAddressData: self.street, city: self.city, state: self.state, zip: self.zipCode)
+            let finances = try FinancialInformation(initWithPaymentInfo: self.paymentInfo)
+            let insurance = try InsuranceInfo(initWith: expirationDate!, memID: self.memid, grpID: self.groupid, amount: Int(self.copay)!)
+            let vitals = try Measurement(initWithVitalData: Int(self.heightft)!, inches: Double(self.heightIn)!, weight: Double(self.weight)!, systolic: Int(self.bpS)!, diastolic: Int(self.bpD)!)
+            let _ = ParseClient.admitPatient(withPatientInfo: patientAddress, insuranceInfo: insurance, financeInfo: finances, name: self.name, maritalStatus: self.maritalStatus!, gender: self.gender!, birthday: self.birthdayDate!, ssn: self.ssn, phone: self.phone, vitalInformation: vitals, completion: { (success, errorMessage, patientRecord) in
+                if success && patientRecord != nil {
+                    //TODO: PResent success image
+                    patientRecord?.addAppointment(Appointment(initWithDoctor: patientRecord!.attendingPhysician, patient: patientRecord!.patient!, timeScheduled: self.appointmentDate!))
+                    patientRecord?.saveInBackground()
+                    self.navigationController?.popViewControllerAnimated(true)
+                } else if errorMessage != "" {
+                    alert = getDefaultAlert("Uh oh", message: errorMessage, actions: nil, useDefaultAction: true)
+                    self.presentViewController(alert, animated: true, completion: nil)
+                }
+            })
         } catch MeasurementError.InvalidBloodPressure {
             alert = getDefaultAlert("Uh oh", message: "You entered an invalid blood pressure.", actions: nil, useDefaultAction: true)
             self.presentViewController(alert, animated: true, completion: nil)
@@ -180,6 +177,61 @@ class AdmitPatientTableViewController: UITableViewController {
             alert = getDefaultAlert("Uh oh, we encountered an unknown error", message: error.localizedDescription, actions: nil, useDefaultAction: true)
             self.presentViewController(alert, animated: true, completion: nil)
         }
+
+    }
+    
+    @IBAction func saveTapped(sender: AnyObject) {
+        var alert: UIAlertController
+        guard checkFields() else {
+            alert = getDefaultAlert("Uh oh", message: "You left some information blank!", actions: nil, useDefaultAction: true)
+            self.presentViewController(alert, animated: true, completion: nil)
+            return
+        }
+        
+        if self.patient == nil && self.patientRecord == nil {
+            self.saveNewPatient()
+        } else {
+            self.patient!.name = self.name
+            self.patient!.phoneNumber = self.phone
+            self.patient!.ssn = self.ssn
+            self.patient!.birthday = self.birthdayDate!
+            self.patient!.gender = self.gender!
+            self.patient!.married = self.maritalStatus!
+            
+            let address = self.patient!.address
+            try! address.changeCity(self.city)
+            try! address.changeZip(self.zipCode)
+            try! address.changeState(self.state)
+            try! address.changeStreet(self.street)
+            self.patient!.address = address
+            
+            let vitals = self.patientRecord!.measurements!
+            try! vitals.addHeight(Int(self.heightft)!, inches: Double(self.heightIn)!)
+            try! vitals.addNewBloodPressure(Int(self.bpS)!, diastolic: Int(self.bpD)!)
+            vitals.weight = Double(self.weight)
+            self.patientRecord!.measurements = vitals
+            
+            let paymentInfo = self.patient!.financials
+            let insurance = self.patient!.insurance
+            
+            paymentInfo.paymentInfo = self.paymentInfo
+            insurance.expirationDate = self.expirationDate!
+            insurance.memberID = self.memid
+            insurance.groupID = self.groupid
+            insurance.copay = Int(self.copay)
+            self.patient!.financials = paymentInfo
+            self.patient!.insurance = insurance
+            
+            self.patientRecord!.patient = self.patient!
+            self.patientRecord!.saveInBackgroundWithBlock({ (success, error) in
+                if success && error == nil {
+                    self.navigationController?.popViewControllerAnimated(true)
+                } else {
+                    let alert = getDefaultAlert("Uh oh", message: "Unable to save new info", actions: nil, useDefaultAction: true)
+                    self.presentViewController(alert, animated: true, completion: nil)
+                }
+            })
+        }
         
     }
 
@@ -188,6 +240,8 @@ class AdmitPatientTableViewController: UITableViewController {
         self.phone = patient!.phoneNumber!
         self.ssn = patient!.ssn
         self.birthday = patient!.birthday.getDateForAppointment()
+        self.gender = patient!.gender
+        self.maritalStatus = patient!.married
         
         let address = self.patient!.address
         self.street = address.getStreet()
