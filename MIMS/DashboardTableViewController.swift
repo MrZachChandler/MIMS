@@ -97,7 +97,13 @@ class DashboardTableViewController: UITableViewController, SWRevealViewControlle
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
         if section == 0 {
-            return 3
+            if flag == UserTypes.AdminUser.rawValue {
+                return 2
+            }
+            else
+            {
+                return 3
+            }
         }
         else if section == 1
         {
@@ -141,6 +147,8 @@ class DashboardTableViewController: UITableViewController, SWRevealViewControlle
             }
         }
         else if flag == UserTypes.OperationalUser.rawValue {
+            cell.selectionStyle = .None
+
             if indexPath.section == 0
             {
                 cell.titleLabel.text = detail10[indexPath.row]
@@ -148,6 +156,8 @@ class DashboardTableViewController: UITableViewController, SWRevealViewControlle
                 cell.detailLabel2.text = detail12[indexPath.row]
                 cell.detailLabel3.text = " "
                 cell.sideInformationLabel.text = " ";
+                cell.selectionStyle = .None
+
                 return cell
             }
             if indexPath.section == 1
@@ -157,6 +167,7 @@ class DashboardTableViewController: UITableViewController, SWRevealViewControlle
                 cell.detailLabel2.text = pendingDetail1[indexPath.row]
                 cell.detailLabel3.text = pendingDetail2[indexPath.row]
                 cell.sideInformationLabel.text = "Active";
+                
                 return cell
             }
             if indexPath.section == 2
@@ -264,6 +275,10 @@ class DashboardTableViewController: UITableViewController, SWRevealViewControlle
             if indexPath.row == 0 {
                 self.performSegueWithIdentifier("AdmitPatient", sender: tableView)
             }
+            if indexPath.row == 1 {
+                self.performSegueWithIdentifier("manage", sender: tableView)
+
+            }
 
         }
         print("Indexpath.row")
@@ -314,6 +329,11 @@ class DashboardTableViewController: UITableViewController, SWRevealViewControlle
             let detailVC:AdmitPatientTableViewController = segue.destinationViewController as! AdmitPatientTableViewController
             detailVC.title = "Admit New Patient"
             detailVC.navigationItem.backBarButtonItem?.title = "Cancel"
+        }
+        if segue.identifier == "manage"
+        {
+            let detailVC:PatientTableViewController = segue.destinationViewController as! PatientTableViewController
+            detailVC.navigationItem.backBarButtonItem?.title = "Back"
         }
     }
     

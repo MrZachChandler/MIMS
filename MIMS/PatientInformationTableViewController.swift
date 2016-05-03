@@ -192,7 +192,16 @@ class PatientInformationTableViewController: UITableViewController {
             if indexPath.section == 2 {
                 //Discharge Patient
                 if indexPath.row == 0 {
-                    ParseClient.dischargePatient(self.patientRecord)
+                    let dischargeAlert = UIAlertController(title: "Discharge Patient", message: "Are you sure", preferredStyle: UIAlertControllerStyle.Alert)
+                    
+                    dischargeAlert.addAction(UIAlertAction(title: "Continue", style: .Default, handler: { (action: UIAlertAction!) in
+                        ParseClient.dischargePatient(self.patientRecord)
+                    }))
+                    
+                    dischargeAlert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: { (action: UIAlertAction!) in
+                    }))
+                    
+                    presentViewController(dischargeAlert, animated: true, completion: nil)
                 }
                 //manage patient information
                 if indexPath.row == 1 {

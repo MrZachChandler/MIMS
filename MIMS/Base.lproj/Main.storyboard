@@ -285,6 +285,7 @@
                     <navigationItem key="navigationItem" id="Bh5-S7-GXi"/>
                     <connections>
                         <segue destination="BO1-yS-12R" kind="show" identifier="AdmitPatient" id="A09-QV-LAQ"/>
+                        <segue destination="rRa-zi-UMc" kind="show" identifier="manage" id="9Up-Hn-9re"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gL6-pa-5wE" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -603,6 +604,7 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="whc-Ia-u6F"/>
+        <segue reference="9Up-Hn-9re"/>
         <segue reference="WVF-GS-d8z"/>
     </inferredMetricsTieBreakers>
 </document>
