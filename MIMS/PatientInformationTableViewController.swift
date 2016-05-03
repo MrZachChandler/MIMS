@@ -13,7 +13,7 @@ class PatientInformationTableViewController: UITableViewController {
     var patient: Patient!
     var patientRecord: PatientRecord!
 
-    let tableData = ["Name", "Address", "Phone", "Martial Status", "Allergies", "Medication", "Required Test", "Perscribed Medication"]
+    let tableData = ["Name", "Address", "Phone", "Martial Status", "Allergies", "Test Taken", "Required Test", "Medication"]
     
     let detailData = ["Name", "Address", "Phone", "Martial Status", "Allergies", "Medication", "Required Test", "Perscribed Medication"]
     
@@ -30,8 +30,9 @@ class PatientInformationTableViewController: UITableViewController {
     
     var selectionFlag = 0
     //0 = symptoms, 1 = test, 2 = treatment, 3 = medication
-
     
+    var listFlag = 0
+    //section 1 action 0
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -122,6 +123,8 @@ class PatientInformationTableViewController: UITableViewController {
                 break
             default:
                 cell.detailTextLabel?.text = ""
+                cell.userInteractionEnabled = true
+
             }
         } else if indexPath.section == 1 {
             cell.textLabel?.text = vitalsData[indexPath.row]
@@ -283,10 +286,37 @@ class PatientInformationTableViewController: UITableViewController {
                 
             }
         case UserTypes.OperationalUser.rawValue:
-
+            if indexPath.section == 0
+            {
+                //allergies
+                if indexPath.row == 4 {
+                    selectionFlag = 4
+                    listFlag = 0
+                    self.performSegueWithIdentifier("List", sender: tableView)
+                }
+                //symptoms
+                if indexPath.row == 5 {
+                    selectionFlag = 5
+                    listFlag = 1
+                    self.performSegueWithIdentifier("List", sender: tableView)
+                }
+                //required test
+                if indexPath.row == 6 {
+                    selectionFlag = 6
+                    listFlag = 0
+                    self.performSegueWithIdentifier("List", sender: tableView)
+                }
+                // medication
+                if indexPath.row == 7 {
+                    selectionFlag = 7
+                    listFlag = 0
+                    self.performSegueWithIdentifier("List", sender: tableView)
+                }
+            }
 
             if indexPath.section == 2 {
                 //request patient test
+                listFlag = 1
                 if indexPath.row == 0 {
                     selectionFlag = 0
                     self.performSegueWithIdentifier("List", sender: tableView)
@@ -405,6 +435,7 @@ class PatientInformationTableViewController: UITableViewController {
             let indexPath:NSIndexPath = self.tableView.indexPathForSelectedRow!
             let detailVC:SelectionListTableViewController = segue.destinationViewController as! SelectionListTableViewController
             detailVC.flag = selectionFlag
+            detailVC.listflag = listFlag
             if flag == UserTypes.AdminUser.rawValue
             {
                 detailVC.title = adminData[indexPath.row]
@@ -417,8 +448,14 @@ class PatientInformationTableViewController: UITableViewController {
                 //else operational user
             else
             {
-                detailVC.title = operationalData[indexPath.row]
-                
+                if indexPath.section == 0
+                {
+                    detailVC.title = tableData[indexPath.row]
+                }
+                else
+                {
+                    detailVC.title = operationalData[indexPath.row]
+                }
             }
             detailVC.navigationItem.backBarButtonItem?.title = "Back"
             detailVC.patientRecord = self.patientRecord

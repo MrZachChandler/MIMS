@@ -21,6 +21,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
+        Condition.registerSubclass()
+        Test.registerSubclass()
+        Scan.registerSubclass()
         
         Patient.registerSubclass()
         Department.registerSubclass()

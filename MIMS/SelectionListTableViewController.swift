@@ -12,6 +12,12 @@ class SelectionListTableViewController: UITableViewController {
 
     var patient: Patient!
     var patientRecord: PatientRecord!
+   
+    var tempObject: AnyObject!
+    
+    
+    var listflag = 0
+    // 0 display patient info , 1 assign patient info
     
     var flag = 0;
     //0 = symptoms, 1 = test, 2 = treatment, 3 = medication
@@ -26,22 +32,81 @@ class SelectionListTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        switch flag {
-        case 0:
-            tableData = symptoms
-        case 1:
-            tableData = test
-        case 2:
-            tableData = treatment
-        case 3:
-            tableData = medication
-        default:
-            tableData = medication
-        }
-        let save = UIBarButtonItem(title: "Save", style: .Plain, target: self, action: #selector(SelectionListTableViewController.saveTapped(_:)))
-        
-        self.navigationItem.setRightBarButtonItem(save, animated: true)
+        if listflag == 0
+        {
+            
+            
+            switch flag {
+            case 4:
+                if patientRecord.conditions?.allergies == nil
+                {
+                    tableData = ["No Allergies on file."]
+                }
+                else
+                {
+                    tableData = (patientRecord.conditions?.allergies)!
+                    print(patientRecord.conditions?.allergies)
+                }
+            case 5:
+                if patientRecord.testsTaken == nil
+                {
+                    tableData = ["No Test have been taken."]
+                    print(patientRecord.testsTaken)
 
+                }
+                else
+                {
+                    tempObject = patientRecord.testsTaken
+                    print(patientRecord.testsTaken)
+                }
+            case 6:
+                if patientRecord.treatments == nil
+                {
+                    tableData = ["No Treatment options have been issued."]
+                    print(patientRecord.treatments)
+
+                }
+                else
+                {
+                    tempObject = patientRecord.treatments
+                    print(patientRecord.treatments)
+                }
+            case 7:
+                if patientRecord.treatments == nil
+                {
+                    tableData = ["No Medication is on file."]
+                    print(patientRecord.treatments?.prescriptions?.description)
+                    
+                }
+                else
+                {
+                    tempObject = patientRecord.treatments?.prescriptions
+                    print(patientRecord.treatments?.prescriptions?.description)
+                }
+            default:
+                tableData = medication
+            }
+        }
+        else
+        {
+            let save = UIBarButtonItem(title: "Save", style: .Plain, target: self, action: #selector(SelectionListTableViewController.saveTapped(_:)))
+            
+            self.navigationItem.setRightBarButtonItem(save, animated: true)
+            
+
+            switch flag {
+                case 0:
+                    tableData = test
+                case 1:
+                    tableData = test
+                case 2:
+                    tableData = symptoms
+                case 3:
+                    tableData = treatment
+                default:
+                    tableData = medication
+            }
+        }
         let sizeArray = [Bool](count: tableData.count, repeatedValue: false)
         checked = sizeArray
         
@@ -90,31 +155,54 @@ class SelectionListTableViewController: UITableViewController {
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("ListCell", forIndexPath: indexPath)
-        cell.textLabel?.text = tableData[indexPath.row]
-        
-        if !checked[indexPath.row] {
-            cell.accessoryType = .None
-        } else if checked[indexPath.row] {
-            cell.accessoryType = .Checkmark
-        }
+        if listflag == 0 {
+            if flag == 5 || flag == 6 || flag == 7
+            {
+                if tempObject != nil {
+                    cell.textLabel?.text = tempObject[indexPath.row].localizedAdditionalDescription
+                }
+                cell.textLabel?.text = tableData[indexPath.row]
 
+            }
+
+            cell.textLabel?.text = tableData[indexPath.row]
+            
+        }
+        else
+        {
+            cell.textLabel?.text = tableData[indexPath.row]
+        
+            if !checked[indexPath.row] {
+                cell.accessoryType = .None
+            } else if checked[indexPath.row] {
+                cell.accessoryType = .Checkmark
+            }
+        }
         return cell
     }
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        if let cell = tableView.cellForRowAtIndexPath(indexPath) {
-            if cell.accessoryType == .Checkmark {
+        if listflag == 0 {
+            if let cell = tableView.cellForRowAtIndexPath(indexPath) {
                 cell.accessoryType = .None
-                checked[indexPath.row] = false
-                if let index = sendingResults.indexOf(tableData[indexPath.row]) {
-                    self.sendingResults.removeAtIndex(index)
+            }
+        }
+        else
+        {
+            if let cell = tableView.cellForRowAtIndexPath(indexPath) {
+                if cell.accessoryType == .Checkmark {
+                    cell.accessoryType = .None
+                    checked[indexPath.row] = false
+                    if let index = sendingResults.indexOf(tableData[indexPath.row]) {
+                        self.sendingResults.removeAtIndex(index)
+                    }
+                }
+                else {
+                    cell.accessoryType = .Checkmark
+                    checked[indexPath.row] = true
+                    sendingResults.append(tableData[indexPath.row])
                 }
             }
-            else {
-                cell.accessoryType = .Checkmark
-                checked[indexPath.row] = true
-                sendingResults.append(tableData[indexPath.row])
-            }
-        }    
+        }
     }
 
     /*
