@@ -13,7 +13,7 @@ class PatientInformationTableViewController: UITableViewController {
     var patient: Patient!
     var patientRecord: PatientRecord!
 
-    let tableData = ["Name", "Address", "Phone", "Martial Status", "Allergies", "Test Taken", "Required Test", "Medication"]
+    let tableData = ["Name", "Address", "Phone", "Martial Status", "Allergies", "Test Taken", "Conditions", "Medication"]
     
     let detailData = ["Name", "Address", "Phone", "Martial Status", "Allergies", "Medication", "Required Test", "Perscribed Medication"]
     
@@ -297,7 +297,7 @@ class PatientInformationTableViewController: UITableViewController {
                 //symptoms
                 if indexPath.row == 5 {
                     selectionFlag = 5
-                    listFlag = 1
+                    listFlag = 0
                     self.performSegueWithIdentifier("List", sender: tableView)
                 }
                 //required test

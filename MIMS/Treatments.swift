@@ -107,9 +107,9 @@ class Prescription: PFObject, PFSubclassing  {
         }
     }
     
-    var scripts: [String]? {
+    var script: String? {
         get {
-            return self["name"] as? [String]
+            return self["name"] as? String
         }
         set {}
     }
@@ -128,12 +128,12 @@ class Prescription: PFObject, PFSubclassing  {
     convenience init(withPharmacist pharmacist: MIMSUser, newScript: String) {
         self.init()
         self.pharmacist = pharmacist
-        self.scripts = [newScript]
+        self.script = newScript
         self.fillStatus = false
     }
     
     func addPrescriptionName(name: String) {
-        self.scripts?.append(name)
+        self.script? = name
     }
     
     func changePharmacist(newPharmacist: MIMSUser) {

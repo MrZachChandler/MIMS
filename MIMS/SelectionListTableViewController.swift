@@ -25,9 +25,10 @@ class SelectionListTableViewController: UITableViewController {
     var sendingResults = [String]()
     var checked = [Bool]()
     
-    let treatment = ["treatment1","treatment2","treatment3","treatment4","treatment5","treatment6","treatment7","treatment8","treatment9"]
-    let medication = ["Medication1","Medication2","Medication3","Medication4","Medication5","Medication6","Medication7","Medication8","Medication9"]
-    let test = ["test1","test2","test3","test4","test5","test6","test7","test8","test","test9","test10","test11","test12","test13","test14"]
+    let test = ["Get Height","Get Weight Blood","Get Blood Pressure","Take Blood","Check Pulse","Check Breathing","General Examination","Check Vision","Ear Examiniation", "Strep Testing"]
+    
+    let medication = ["Acetaminophen","Adderall","Alprazolam","Amitriptyline","Amlodipine","Amoxicillin","Ativan","Atorvastatin","Azithromycin","Ciprofloxacin","Citalopram","Clindamycin","Clonazepam","Codeine","Cyclobenzaprine","Cymbalta","Doxycycline","Gabapentin","Hydrochlorothiazide","Ibuprofen","Lexapro","Lisinopril","Loratadine","Lorazepam","Losartan","Lyrica","Meloxicam","Metformin","Metoprolol","Naproxen","Omeprazole","Oxycodone","Pantoprazole","Prednisone","Tramadol","Trazodone","Viagra","Wellbutrin","Xanax","Zoloft"]
+    let treatment = ["Knee Surgery","Heart Surgery","Eye Surgery","Chest Surgery","Open Heart Surgery","Cranial Surgery","Hand Surgery","Spinal Surgery","Toe Surgery","Mental Surgery"]
     let symptoms = ["Symptoms1","Symptoms2","Symptoms3","Symptoms4","Symptoms5","Symptoms6","Symptoms7","Symptoms8","Symptoms9","Symptoms10","Symptoms11"]
     
     override func viewDidLoad() {
@@ -45,34 +46,39 @@ class SelectionListTableViewController: UITableViewController {
                 else
                 {
                     tableData = (patientRecord.conditions?.allergies)!
-                    print(patientRecord.conditions?.allergies)
                 }
             case 5:
                 if patientRecord.testsTaken == nil
                 {
                     tableData = ["No Test have been taken."]
-                    print(patientRecord.testsTaken)
 
                 }
                 else
                 {
-                    tempObject = patientRecord.testsTaken
-                    print(patientRecord.testsTaken)
+                    for item in patientRecord.testsTaken!
+                    {
+                        tableData.append(item.testDescription!)
+                    }
                 }
             case 6:
-                if patientRecord.treatments == nil
+                if patientRecord.conditions == nil
                 {
-                    tableData = ["No Treatment options have been issued."]
-                    print(patientRecord.treatments)
-
+                    tableData = ["No Conditions options have been issued."]
                 }
                 else
                 {
-                    tempObject = patientRecord.treatments
-                    print(patientRecord.treatments)
+                    
+                    for item in (patientRecord.conditions?.disease)!
+                    {
+                        tableData.append(item)
+                    }
+                    for item in (patientRecord.conditions?.disorders)!
+                    {
+                        tableData.append(item)
+                    }
                 }
             case 7:
-                if patientRecord.treatments == nil
+                if patientRecord.treatments?.prescriptions == nil
                 {
                     tableData = ["No Medication is on file."]
                     print(patientRecord.treatments?.prescriptions?.description)
@@ -80,8 +86,10 @@ class SelectionListTableViewController: UITableViewController {
                 }
                 else
                 {
-                    tempObject = patientRecord.treatments?.prescriptions
-                    print(patientRecord.treatments?.prescriptions?.description)
+                    for item in (patientRecord.treatments?.prescriptions)!
+                    {
+                        tableData.append(item.script!)
+                    }
                 }
             default:
                 tableData = medication
@@ -156,16 +164,10 @@ class SelectionListTableViewController: UITableViewController {
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("ListCell", forIndexPath: indexPath)
         if listflag == 0 {
-            if flag == 5 || flag == 6 || flag == 7
-            {
-                if tempObject != nil {
-                    cell.textLabel?.text = tempObject[indexPath.row].localizedAdditionalDescription
-                }
-                cell.textLabel?.text = tableData[indexPath.row]
-
-            }
-
+            
             cell.textLabel?.text = tableData[indexPath.row]
+            cell.accessoryType = .None
+            cell.selectionStyle = .None
             
         }
         else
