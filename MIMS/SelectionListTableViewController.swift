@@ -14,6 +14,7 @@ class SelectionListTableViewController: UITableViewController {
     var patientRecord: PatientRecord!
    
     var tempObject: AnyObject!
+    var rawValueArray: [String]!
     
     
     var listflag = 0
@@ -29,6 +30,7 @@ class SelectionListTableViewController: UITableViewController {
     let medication = ["Medication1","Medication2","Medication3","Medication4","Medication5","Medication6","Medication7","Medication8","Medication9"]
     let test = ["test1","test2","test3","test4","test5","test6","test7","test8","test","test9","test10","test11","test12","test13","test14"]
     let symptoms = ["Symptoms1","Symptoms2","Symptoms3","Symptoms4","Symptoms5","Symptoms6","Symptoms7","Symptoms8","Symptoms9","Symptoms10","Symptoms11"]
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -117,6 +119,59 @@ class SelectionListTableViewController: UITableViewController {
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
     }
+    
+//    func fillArrayWithRawValues() {
+//        rawValueArray = [String]()
+//        if tempObject is [String] { //it's allergies!
+//            for allergy in iterateEnum(Allergy.Allergies.self) {
+//                rawValueArray.append(allergy.rawValue)
+//            }
+//        }
+//        
+//        if tempObject is [Prescription] {
+//            for script in tempObject as! [Prescription] {
+//                script.fetchInBackgroundWithBlock({ (newScript, error) in
+//                    if error == nil {
+//                    self.rawValueArray.append((newScript as! Prescription).scripts!)
+//                    }
+//                })
+//            }
+//        }
+//        
+//        if tempObject is [Disease] {
+//            
+//        }
+//    }
+//    
+//    func createDiseaseArray() -> [String] {
+//        var diseaseArray = [String]()
+//        
+//        for disease in iterateEnum(Disease.Disease.self) {
+//            diseaseArray.append(disease.rawValue)
+//        }
+//        
+//        return diseaseArray
+//    }
+//    
+//    func createDisorderArray() -> [String] {
+//        var disorderArray = [String]()
+//        
+//        for disorder in iterateEnum(Disorder.Disorders.self) {
+//            disorderArray.append(disorder.rawValue)
+//        }
+//        return disorderArray
+//    }
+//    
+//    func createAllergyArray() -> [String] {
+//        var allergyArray = [String]()
+//        
+//        for allergy in iterateEnum(Allergy.Allergies.self) {
+//            allergyArray.append(allergy.rawValue)
+//        }
+//        return allergyArray
+//    }
+    
+    
     @IBAction func saveTapped(sender: AnyObject) {
         switch flag {
         case 0:
@@ -126,6 +181,12 @@ class SelectionListTableViewController: UITableViewController {
             ParseClient.addPatientTests(self.sendingResults, toPatientRecord: patientRecord)
         case 2:
              //treatment
+            guard let patientTreatmentRecord = self.patientRecord.treatments else {
+                return
+            }
+            for request in self.sendingResults {
+                patientTreatmentRecord.addSurgery(Surgery(withSurgeon: MIMSUser.currentUser()!)
+            }
             break
         case 3:
             tableData = medication

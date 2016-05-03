@@ -382,7 +382,7 @@ class ParseClient {
                     let scripts = treatments.prescriptions
                     var scriptDescriptions: [String]!
                     for script in scripts! {
-                        scriptDescriptions.appendContentsOf(script.scripts!)
+                        scriptDescriptions.append(script.scripts!)
                     }
                     for description in scriptDescriptions {
                         if !(record.conditions?.allergies?.contains(description))! {

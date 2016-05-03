@@ -15,6 +15,13 @@ import Parse
 struct Disease {
     enum Disease: String {
         case Diabetes = "diabetes"
+        case Alzeheimers = "alzheimers"
+        case Arthritis = "arthritis"
+        case Asthma = "asthma"
+        case Cancer = "cancer"
+        case Stroke = "stroke"
+        case HIV = "hiv"
+        case COPD = "copd"
     }
     
     var disease: Disease
@@ -23,7 +30,7 @@ struct Disease {
     }
     
     init(withDiseaseName name: String) throws {
-        guard let newDisease = Disease(rawValue: name) else {
+        guard let newDisease = Disease(rawValue: name.lowercaseString) else {
             throw ConditionError.InvalidDisease
         }
         self.disease = newDisease
@@ -34,6 +41,14 @@ struct Disease {
 struct Allergy {
     enum Allergies: String {
         case Insulin = "insulin"
+        case Pollen = "pollen"
+        case DustMites = "dust mites"
+        case Mold = "mold"
+        case AnimalHair = "animal hair"
+        case InsectSting = "insect sting"
+        case Latex = "latex"
+        case Food = "food"
+        case Drug = "drug"
     }
     
     var allergy: Allergies
@@ -43,7 +58,7 @@ struct Allergy {
     }
     
     init(withAllergyName name: String) throws {
-        guard let newAllergy = Allergies(rawValue: name) else {
+        guard let newAllergy = Allergies(rawValue: name.lowercaseString) else {
             throw ConditionError.InvalidAllergy
         }
         self.allergy = newAllergy
@@ -54,6 +69,14 @@ struct Disorder {
     
     enum Disorders: String {
         case ExampleDisorder = "example"
+        case Bipolar = "bipolar"
+        case CysticFibrosis = "cystic fibrosis"
+        case HuntingtonsDisease = "huntington's disease"
+        case DownSyndrome = "down syndrome"
+        case MuscularDystrophy = "muscular dystrophy"
+        case SickleCellAnemia = "cickle cell anemia"
+        case CeliacDiseases = "celiac disease"
+        case MultiplePersonalityDisorder = "multiple personality disorder"
     }
     
     var disorder: Disorders
@@ -62,7 +85,7 @@ struct Disorder {
     }
     
     init(withDisorderName name: String) throws {
-        guard let newDisorder = Disorders(rawValue: name) else {
+        guard let newDisorder = Disorders(rawValue: name.lowercaseString) else {
             throw ConditionError.InvalidDisorder
         }
         self.disorder = newDisorder
@@ -72,6 +95,16 @@ struct Disorder {
 struct CauseOfDeath {
     enum Cause: String {
         case HeartAttack = "heart attack"
+        case HeartDisease = "heart disease"
+        case Cancer = "cancer"
+        case RespiratoryDisease = "resipratory disease"
+        case Accident = "accident"
+        case Alzheimers = "alzheimer's diease"
+        case Diabetes = "diabetes"
+        case Influenza = "influenza"
+        case Pneumonia = "pneumonia"
+        case KidneyDisease = "kidney disease"
+        case Suicide = "suicide"
     }
     
     var causeOfDeath: Cause
