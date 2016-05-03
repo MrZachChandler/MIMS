@@ -15,7 +15,7 @@ class PatientInformationTableViewController: UITableViewController {
 
     let tableData = ["Name", "Address", "Phone", "Martial Status", "Allergies", "Test Taken", "Conditions", "Medication"]
     
-    let detailData = ["Name", "Address", "Phone", "Martial Status", "Allergies", "Medication", "Required Test", "Perscribed Medication"]
+    let detailData = ["Name", "Address", "Phone", "Martial Status", "Allergies", "Medication", "Conditions", "Perscribed Medication"]
     
     let actionData = ["Delete Patient Record", "Charge Patient", "Manage Patient Insurence", "Admit Patient", "Discharge Patient" , "Manage Patient Information", "Request Patient Test", "Complete Patient Test", "Diagnose Symptoms","Issue Treatent", "Prescribe Medication", "Check Patient Status", "Transfer Patient"]
     

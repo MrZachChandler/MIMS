@@ -104,3 +104,11 @@ func getDefaultAlert(title: String, message: String, actions: [UIAlertAction]?, 
     }
     return alert
 }
+
+func iterateEnum<T: Hashable>(_: T.Type) -> AnyGenerator<T> {
+    var i = 0
+    return AnyGenerator {
+        let next = withUnsafePointer(&i) { UnsafePointer<T>($0).memory }
+        return next.hashValue == i++ ? next : nil
+    }
+}

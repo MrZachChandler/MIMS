@@ -180,14 +180,20 @@ class Surgery: PFObject, PFSubclassing {
         }
     }
     
+    var surgeryName: String {
+        get {return self["name"] as! String}
+        set {self["name"] = newValue}
+    }
+    
     var timeScheduled: NSDate? {
         get {return self["timeScheduled"] as? NSDate}
         set {if newValue != nil {self["timeScheduled"] = newValue!}}
     }
     
-    convenience init(withSurgeon surgeon: MIMSUser) {
+    convenience init(withSurgeon surgeon: MIMSUser, surgeryName name: String) {
         self.init()
         self.attendingSurgeon = surgeon
+        self.surgeryName = name
     }
     
     class func parseClassName() -> String {

@@ -9,11 +9,12 @@
 import UIKit
 
 class SelectionListTableViewController: UITableViewController {
-
+    
     var patient: Patient!
     var patientRecord: PatientRecord!
-   
+    
     var tempObject: AnyObject!
+    var rawValueArray: [String]!
     
     
     var listflag = 0
@@ -30,6 +31,7 @@ class SelectionListTableViewController: UITableViewController {
     let medication = ["Acetaminophen","Adderall","Alprazolam","Amitriptyline","Amlodipine","Amoxicillin","Ativan","Atorvastatin","Azithromycin","Ciprofloxacin","Citalopram","Clindamycin","Clonazepam","Codeine","Cyclobenzaprine","Cymbalta","Doxycycline","Gabapentin","Hydrochlorothiazide","Ibuprofen","Lexapro","Lisinopril","Loratadine","Lorazepam","Losartan","Lyrica","Meloxicam","Metformin","Metoprolol","Naproxen","Omeprazole","Oxycodone","Pantoprazole","Prednisone","Tramadol","Trazodone","Viagra","Wellbutrin","Xanax","Zoloft"]
     let treatment = ["Knee Surgery","Heart Surgery","Eye Surgery","Chest Surgery","Open Heart Surgery","Cranial Surgery","Hand Surgery","Spinal Surgery","Toe Surgery","Mental Surgery"]
     let symptoms = ["Symptoms1","Symptoms2","Symptoms3","Symptoms4","Symptoms5","Symptoms6","Symptoms7","Symptoms8","Symptoms9","Symptoms10","Symptoms11"]
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -101,18 +103,18 @@ class SelectionListTableViewController: UITableViewController {
             
             self.navigationItem.setRightBarButtonItem(save, animated: true)
             
-
+            
             switch flag {
-                case 0:
-                    tableData = test
-                case 1:
-                    tableData = test
-                case 2:
-                    tableData = symptoms
-                case 3:
-                    tableData = treatment
-                default:
-                    tableData = medication
+            case 0:
+                tableData = test
+            case 1:
+                tableData = test
+            case 2:
+                tableData = createSymptoms()
+            case 3:
+                tableData = treatment
+            default:
+                tableData = medication
             }
         }
         let sizeArray = [Bool](count: tableData.count, repeatedValue: false)
@@ -121,45 +123,154 @@ class SelectionListTableViewController: UITableViewController {
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
-
+        
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
     }
-    @IBAction func saveTapped(sender: AnyObject) {
-        switch flag {
-        case 0:
-            //symptoms
-            break
-        case 1:
-            ParseClient.addPatientTests(self.sendingResults, toPatientRecord: patientRecord)
-        case 2:
-             //treatment
-            break
-        case 3:
-            tableData = medication
-        default:
-            tableData = medication
+    
+    //    func fillArrayWithRawValues() {
+    //        rawValueArray = [String]()
+    //        if tempObject is [String] { //it's allergies!
+    //            for allergy in iterateEnum(Allergy.Allergies.self) {
+    //                rawValueArray.append(allergy.rawValue)
+    //            }
+    //        }
+    //
+    //        if tempObject is [Prescription] {
+    //            for script in tempObject as! [Prescription] {
+    //                script.fetchInBackgroundWithBlock({ (newScript, error) in
+    //                    if error == nil {
+    //                    self.rawValueArray.append((newScript as! Prescription).scripts!)
+    //                    }
+    //                })
+    //            }
+    //        }
+    //
+    //        if tempObject is [Disease] {
+    //
+    //        }
+    //    }
+    //
+    //    func createDiseaseArray() -> [String] {
+    //        var diseaseArray = [String]()
+    //
+    //        for disease in iterateEnum(Disease.Disease.self) {
+    //            diseaseArray.append(disease.rawValue)
+    //        }
+    //
+    //        return diseaseArray
+    //    }
+    //
+    //    func createDisorderArray() -> [String] {
+    //        var disorderArray = [String]()
+    //
+    //        for disorder in iterateEnum(Disorder.Disorders.self) {
+    //            disorderArray.append(disorder.rawValue)
+    //        }
+    //        return disorderArray
+    //    }
+    //
+    //    func createAllergyArray() -> [String] {
+    //        var allergyArray = [String]()
+    //
+    //        for allergy in iterateEnum(Allergy.Allergies.self) {
+    //            allergyArray.append(allergy.rawValue)
+    //        }
+    //        return allergyArray
+    //    }
+    
+    func createSymptoms() -> [String] {
+        var symptoms = [String]()
+        
+        for disease in iterateEnum(Disease.Disease.self) {
+            symptoms.append(disease.rawValue.localizedUppercaseString)
         }
-        navigationController?.popViewControllerAnimated(true)
-
+        
+        for disorder in iterateEnum(Disorder.Disorders.self) {
+            symptoms.append(disorder.rawValue.localizedUppercaseString)
+        }
+        
+        for allergy in iterateEnum(Allergy.Allergies.self) {
+            symptoms.append(allergy.rawValue.localizedUppercaseString)
+        }
+        
+        return symptoms
     }
     
-
+    
+    @IBAction func saveTapped(sender: AnyObject) {
+        if sendingResults.count != 0 {
+            switch flag {
+            case 0:
+                //request patient test
+                break
+            case 1:
+                //complete patient tests
+                ParseClient.addPatientTests(self.sendingResults, toPatientRecord: patientRecord)
+            case 2:
+                //symptoms
+                guard let patientConditions = self.patientRecord.conditions else {
+                    return
+                }
+                for newSymptom in self.sendingResults {
+                    newSymptom.lowercaseString
+                    do {
+                        if let allergy = try? Allergy(withAllergyName: newSymptom) {
+                            try patientConditions.addAllergy(allergy.description)
+                        } else if let disease = try? Disease(withDiseaseName: newSymptom) {
+                            try patientConditions.addDisease(disease.description)
+                        } else if let disorder = try? Disorder(withDisorderName: newSymptom) {
+                            try patientConditions.addDisorder(disorder.description)
+                        }
+                        patientConditions.saveInBackgroundWithBlock({ (success, error) in
+                            if success && error == nil {
+                                self.navigationController?.popViewControllerAnimated(true)
+                            }
+                        })
+                    } catch let error {
+                        //TODO: Present Error
+                    }
+                }
+                break
+            case 3:
+                //issue treatment
+                guard let patientTreatmentRecord = self.patientRecord.treatments else {
+                    return
+                }
+                for request in self.sendingResults {
+                    patientTreatmentRecord.addSurgery(Surgery(withSurgeon: MIMSUser.currentUser()!, surgeryName: request))
+                }
+                patientTreatmentRecord.saveInBackgroundWithBlock({ (success, error) in
+                    if success && error == nil {
+                        self.navigationController?.popViewControllerAnimated(true)
+                    }
+                })
+            case 4:
+                //prescribe medicine
+                break
+            default:
+                break
+            }
+        }
+        
+    }
+    
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
+    
     // MARK: - Table view data source
-
+    
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }
-
+    
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tableData.count
     }
-
+    
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("ListCell", forIndexPath: indexPath)
@@ -173,7 +284,7 @@ class SelectionListTableViewController: UITableViewController {
         else
         {
             cell.textLabel?.text = tableData[indexPath.row]
-        
+            
             if !checked[indexPath.row] {
                 cell.accessoryType = .None
             } else if checked[indexPath.row] {
@@ -206,50 +317,50 @@ class SelectionListTableViewController: UITableViewController {
             }
         }
     }
-
+    
     /*
-    // Override to support conditional editing of the table view.
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
+     // Override to support conditional editing of the table view.
+     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+     // Return false if you do not want the specified item to be editable.
+     return true
+     }
+     */
+    
     /*
-    // Override to support editing the table view.
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == .Delete {
-            // Delete the row from the data source
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-        } else if editingStyle == .Insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
+     // Override to support editing the table view.
+     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+     if editingStyle == .Delete {
+     // Delete the row from the data source
+     tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+     } else if editingStyle == .Insert {
+     // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+     }
+     }
+     */
+    
     /*
-    // Override to support rearranging the table view.
-    override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-
-    }
-    */
-
+     // Override to support rearranging the table view.
+     override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
+     
+     }
+     */
+    
     /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
+     // Override to support conditional rearranging of the table view.
+     override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+     // Return false if you do not want the item to be re-orderable.
+     return true
+     }
+     */
+    
     /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+     // MARK: - Navigation
+     
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+     // Get the new view controller using segue.destinationViewController.
+     // Pass the selected object to the new view controller.
+     }
+     */
+    
 }
