@@ -96,6 +96,7 @@ class SelectionListTableViewController: UITableViewController {
                 }
             default:
                 tableData = medication
+                
             }
         }
         else
