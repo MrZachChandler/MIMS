@@ -275,6 +275,14 @@ class SelectionListTableViewController: UITableViewController {
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("ListCell", forIndexPath: indexPath)
         if listflag == 0 {
+            if flag == 5 || flag == 6 || flag == 7
+            {
+                if tempObject != nil {
+                    cell.textLabel?.text = tempObject[indexPath.row].localizedAdditionalDescription
+                }
+                cell.textLabel?.text = tableData[indexPath.row]
+                
+            }
             
             cell.textLabel?.text = tableData[indexPath.row]
             cell.accessoryType = .None
