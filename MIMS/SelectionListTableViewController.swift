@@ -16,7 +16,7 @@ class SelectionListTableViewController: UITableViewController {
     var tempObject: AnyObject!
     var rawValueArray: [String]!
     
-    
+    var pendingArry = [Bool]()
     var listflag = 0
     // 0 display patient info , 1 assign patient info
     
@@ -60,13 +60,14 @@ class SelectionListTableViewController: UITableViewController {
                 if patientRecord.testsTaken == nil
                 {
                     tableData = ["No Test have been taken."]
-                    
                 }
                 else
                 {
                     for item in patientRecord.testsTaken!
                     {
                         tableData.append(item.testDescription!)
+                        if item.completedStatus == false {
+                        }
                     }
                 }
             case 6:
@@ -130,7 +131,7 @@ class SelectionListTableViewController: UITableViewController {
         }
         let sizeArray = [Bool](count: tableData.count, repeatedValue: false)
         checked = sizeArray
-        
+        pendingArry = sizeArray
         tableData = tableData.map {$0.localizedCapitalizedString}
         
         
@@ -268,6 +269,7 @@ class SelectionListTableViewController: UITableViewController {
     // MARK: - Table view data source
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+
         return 1
     }
     
@@ -279,24 +281,28 @@ class SelectionListTableViewController: UITableViewController {
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("ListCell", forIndexPath: indexPath)
         if listflag == 0 {
-            if flag == 5 || flag == 6 || flag == 7
+            if flag == 5
             {
-                if tempObject != nil {
-                    cell.textLabel?.text = tempObject[indexPath.row].localizedAdditionalDescription
+                if patientRecord.testsTaken![indexPath.row].completedStatus == true
+                {
+                
+                    cell.textLabel?.text = tableData[indexPath.row]
+                    cell.detailTextLabel?.text = "Completed"
+                }
+                else
+                {
+                    cell.detailTextLabel?.text = "Pending"
                 }
                 cell.textLabel?.text = tableData[indexPath.row]
-                
+                cell.accessoryType = .None
+                cell.selectionStyle = .None
             }
-            
-            cell.textLabel?.text = tableData[indexPath.row]
-            cell.accessoryType = .None
-            cell.selectionStyle = .None
-            
         }
         else
         {
             cell.textLabel?.text = tableData[indexPath.row]
-            
+            cell.detailTextLabel?.text = ""
+
             if !checked[indexPath.row] {
                 cell.accessoryType = .None
             } else if checked[indexPath.row] {
@@ -304,6 +310,7 @@ class SelectionListTableViewController: UITableViewController {
             }
         }
         return cell
+
     }
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         if listflag == 0 {
@@ -329,7 +336,7 @@ class SelectionListTableViewController: UITableViewController {
             }
         }
     }
-    
+
     /*
      // Override to support conditional editing of the table view.
      override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {

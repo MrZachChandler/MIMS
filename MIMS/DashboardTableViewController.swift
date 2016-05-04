@@ -11,7 +11,7 @@ import UIKit
 class DashboardTableViewController: UITableViewController, SWRevealViewControllerDelegate {
 
     var menuButton: UIButton!
-    
+    var appointments: [Appointment]?
     var flag: String!
     //flag 0 = admin, 1 = operational, 2 = technical
     
@@ -46,6 +46,8 @@ class DashboardTableViewController: UITableViewController, SWRevealViewControlle
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.queryTable()
         
         menuButton = UIButton(frame: CGRectMake(0, 0, 20, 20))
         menuButton.setBackgroundImage(UIImage(named: "Side menu.png"), forState: .Normal)
@@ -100,10 +102,16 @@ class DashboardTableViewController: UITableViewController, SWRevealViewControlle
             if flag == UserTypes.AdminUser.rawValue {
                 return 2
             }
-            else
+            else if flag == UserTypes.OperationalUser.rawValue
             {
-                return 3
+                if appointments == nil{
+                    print("Returning one from number of rows in section 1")
+                    return 1
+                }
+                print("Returning \(appointments!.count) from number of rows in section 1")
+                return (appointments!.count > 0) ? appointments!.count : 1
             }
+            return 3
         }
         else if section == 1
         {
@@ -151,14 +159,22 @@ class DashboardTableViewController: UITableViewController, SWRevealViewControlle
 
             if indexPath.section == 0
             {
-                cell.titleLabel.text = detail10[indexPath.row]
-                cell.detailLabel1.text = detail11[indexPath.row]
-                cell.detailLabel2.text = detail12[indexPath.row]
+                var appointment: Appointment!
+                cell.titleLabel.text = "No Current Appointments"
+                cell.detailLabel1.text = " "
+                cell.detailLabel2.text = " "
                 cell.detailLabel3.text = " "
                 cell.sideInformationLabel.text = " ";
-                cell.selectionStyle = .None
-
+                cell.accessoryType = .None
+                if appointments?.count > 0 {
+                    appointment = appointments![indexPath.row]
+                    cell.bindAppointment(appointmentToBind: appointment)
+                    return cell
+                }
+                
+                
                 return cell
+
             }
             if indexPath.section == 1
             {
@@ -217,10 +233,10 @@ class DashboardTableViewController: UITableViewController, SWRevealViewControlle
             cell.sideInformationLabel.text = " ";
             return cell
         }
-        
-        return cell
+    return cell
     }
-    
+
+
     override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch flag {
         case UserTypes.AdminUser.rawValue:
@@ -290,45 +306,18 @@ class DashboardTableViewController: UITableViewController, SWRevealViewControlle
         print(indexPath.row)
     }
 
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
+    func queryTable() {
+        self.queryAppointments()
     }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == .Delete {
-            // Delete the row from the data source
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-        } else if editingStyle == .Insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
     
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    func queryAppointments() {
+        ParseClient.queryAppointments { (appointments, error) in
+            if error == nil && appointments != nil {
+                self.appointments = appointments
+                self.tableView.reloadData()
+            }
+        }
+    }    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "AdmitPatient" {
             let detailVC:AdmitPatientTableViewController = segue.destinationViewController as! AdmitPatientTableViewController
@@ -341,5 +330,5 @@ class DashboardTableViewController: UITableViewController, SWRevealViewControlle
             detailVC.navigationItem.backBarButtonItem?.title = "Back"
         }
     }
-    
+
 }

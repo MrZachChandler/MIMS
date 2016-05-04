@@ -230,8 +230,8 @@
 			children = (
 				2FB8F58A1CCD6AE9002C0E12 /* PatientInformationTableViewController.swift */,
 				2F051A1B1CD3B7C300506ABE /* AdmitPatientTableViewController.swift */,
-				8F27425D1CC9B9B000D7B4B6 /* PatientTableViewController.swift */,
 				2FD137AB1CCE8C6A00FEDC1A /* SelectionListTableViewController.swift */,
+				8F27425D1CC9B9B000D7B4B6 /* PatientTableViewController.swift */,
 			);
 			name = Patients;
 			sourceTree = "<group>";
