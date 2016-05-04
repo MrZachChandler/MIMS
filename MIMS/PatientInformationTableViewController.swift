@@ -503,6 +503,7 @@ class PatientInformationTableViewController: UITableViewController {
                 let detailVC:AdmitPatientTableViewController = segue.destinationViewController as! AdmitPatientTableViewController
                 detailVC.title = self.title
                 detailVC.patientRecord = self.patientRecord
+                detailVC.techFlag = 0
                 detailVC.patient = self.patient
             }
             else

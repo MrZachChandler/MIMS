@@ -12,7 +12,7 @@ import THCalendarDatePicker
 class AdmitPatientTableViewController: UITableViewController {
 
     //flag for technical user
-    var techFlag = 0
+    var techFlag = 1
     //1 = not tech user
     
     //titles
@@ -139,6 +139,7 @@ class AdmitPatientTableViewController: UITableViewController {
             let _ = ParseClient.admitPatient(withPatientInfo: patientAddress, insuranceInfo: insurance, financeInfo: finances, name: self.name, maritalStatus: self.maritalStatus!, gender: self.gender!, birthday: self.birthdayDate!, ssn: self.ssn, phone: self.phone, vitalInformation: vitals, completion: { (success, errorMessage, patientRecord) in
                 if success && patientRecord != nil {
                     //TODO: PResent success image
+                    patientRecord?.appointments = [Appointment]()
                     patientRecord?.addAppointment(Appointment(initWithDoctor: patientRecord!.attendingPhysician, patient: patientRecord!.patient!, timeScheduled: self.appointmentDate!))
                     patientRecord?.saveInBackground()
                     self.navigationController?.popViewControllerAnimated(true)
@@ -446,50 +447,7 @@ class AdmitPatientTableViewController: UITableViewController {
         return self.birthdayDate != nil && self.name.characters.count > 0 && self.phone.characters.count > 0 && self.ssn.characters.count > 0 && self.gender != nil && self.maritalStatus != nil && self.street.characters.count > 0 && self.city.characters.count > 0 && self.state.characters.count > 0 && self.zipCode.characters.count > 0 && self.paymentInfo.characters.count > 0 && self.expirationDate != nil && self.memid.characters.count > 0 && self.groupid.characters.count > 0 && self.copay.characters.count > 0 && heightIn.characters.count > 0 && heightft.characters.count > 0 && weight.characters.count > 0 && bpD.characters.count > 0 && bpS.characters.count > 0 && self.appointmentDate != nil
     }
    
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
 
-    /*
-    // Override to support editing the table view.
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == .Delete {
-            // Delete the row from the data source
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-        } else if editingStyle == .Insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }
 
