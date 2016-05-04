@@ -57,7 +57,7 @@ class SelectionListTableViewController: UITableViewController {
                     
                 }
             case 5:
-                if patientRecord.testsTaken == nil
+                if patientRecord.testsTaken == nil || patientRecord.testsTaken?.count == 0
                 {
                     tableData = ["No Test have been taken."]
                 }
@@ -131,7 +131,6 @@ class SelectionListTableViewController: UITableViewController {
         }
         let sizeArray = [Bool](count: tableData.count, repeatedValue: false)
         checked = sizeArray
-        pendingArry = sizeArray
         tableData = tableData.map {$0.localizedCapitalizedString}
         
         
@@ -283,32 +282,30 @@ class SelectionListTableViewController: UITableViewController {
         if listflag == 0 {
             if flag == 5
             {
-                if patientRecord.testsTaken![indexPath.row].completedStatus == true
-                {
-                
-                    cell.textLabel?.text = tableData[indexPath.row]
-                    cell.detailTextLabel?.text = "Completed"
-                }
-                else
-                {
-                    cell.detailTextLabel?.text = "Pending"
+                if patientRecord.testsTaken?.count > 0 {
+                    if patientRecord.testsTaken![indexPath.row].completedStatus == true {
+                        //cell.textLabel?.text = tableData[indexPath.row]
+                        cell.detailTextLabel?.text = "Completed"
+                    } else {
+                        cell.detailTextLabel?.text = "Pending"
+                    }
                 }
                 cell.textLabel?.text = tableData[indexPath.row]
                 cell.accessoryType = .None
                 cell.selectionStyle = .None
+                return cell
             }
         }
-        else
-        {
+        
             cell.textLabel?.text = tableData[indexPath.row]
-            cell.detailTextLabel?.text = ""
+            cell.detailTextLabel?.text = " "
 
             if !checked[indexPath.row] {
                 cell.accessoryType = .None
             } else if checked[indexPath.row] {
                 cell.accessoryType = .Checkmark
             }
-        }
+        
         return cell
 
     }
