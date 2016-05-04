@@ -137,6 +137,8 @@ class DashboardTableViewController: UITableViewController, SWRevealViewControlle
             }
             if indexPath.section == 1
             {
+                cell.userInteractionEnabled = false
+                cell.accessoryType = .None
                 cell.titleLabel.text = pendingRequest[indexPath.row]
                 cell.detailLabel1.text = pendingDetail0[indexPath.row]
                 cell.detailLabel2.text = pendingDetail1[indexPath.row]
@@ -146,6 +148,8 @@ class DashboardTableViewController: UITableViewController, SWRevealViewControlle
             }
             if indexPath.section == 2
             {
+                cell.userInteractionEnabled = false
+                cell.accessoryType = .None
                 cell.titleLabel.text = perscriptionRequest[indexPath.row]
                 cell.detailLabel1.text = perscriptionDetail0[indexPath.row]
                 cell.detailLabel2.text = perscriptionDetail1[indexPath.row]
